@@ -7,7 +7,8 @@
 
         <div class="card-body">
             <div class="table-responsive">
-                <table class=" table table-striped table-hover table-sm dt-responsive nowrap ajaxTable datatable datatable-AuditLog">
+                <table
+                    class=" table table-striped table-hover table-sm dt-responsive nowrap ajaxTable datatable datatable-AuditLog">
                     <thead class="thead-dark">
                         <tr>
                             <th width="10">
