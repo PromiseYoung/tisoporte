@@ -1,28 +1,24 @@
-Demo support ticketing project based on Laravel 8.
+# Web Developer Young Dev
 
-Project is partly generated with [QuickAdminPanel](https://2019.quickadminpanel.com)
+# Sistema de Tickets de Soporte - Laravel 8
 
+Este repositorio contiene una aplicación web para la gestión de tickets de soporte, desarrollada con **Laravel 8**. El sistema permite a los usuarios crear y gestionar tickets de soporte, a los agentes asignar, responder y cerrar tickets. Además, se incluyen características adicionales como la autenticación de usuarios y roles, y notificaciones en tiempo real.
 
-## How to use
+## Características
 
-- Clone the repository with __git clone__
-- Copy __.env.example__ file to __.env__ and edit database credentials there
-- Run __composer install__
-- Run __php artisan key:generate__
-- Run ____ (it has some seeded data for your testing)
-- That's it: launch the main URL 
-- If you want to login, click `Login` on top-right and use credentials __admin.com__ - __password__ 
-- Agent's credentials are __agent1@agent1.com__ - __password__ 
+- **Autenticación de usuarios**: Los usuarios pueden registrarse, iniciar sesión y gestionar su perfil.
+- **Creación de tickets**: Los usuarios pueden crear tickets de soporte detallando el problema.
+- **Gestión de tickets**: Los agentes de soporte pueden asignar, responder y cerrar tickets.
+- **Notificaciones**: Los usuarios y agentes reciben notificaciones cuando se actualizan los tickets.
+- **Panel de administración**: Los administradores pueden ver y gestionar todos los tickets y usuarios del sistema.
 
----
-## License
+## Requisitos
 
-Basically, feel free to use and re-use any way you want.
+Antes de ejecutar el proyecto, asegúrate de tener instalados los siguientes requisitos:
 
----
-
-## More from our LaravelDaily Team
-
-- Check out our adminpanel generator [QuickAdminPanel](https://quickadminpanel.com)
-- FREE E-book: [50 Laravel Quick Tips (and counting)](https://laraveldaily.com/free-e-book-40-laravel-quick-tips-and-counting/)
-- Subscribe to our [YouTube channel Laravel Business](https://www.youtube.com/channel/UCTuplgOBi6tJIlesIboymGA)
+- PHP 7.4 o superior
+- Composer
+- MySQL o SQLite (u otro sistema de base de datos compatible con Laravel)
+- Node.js y npm (para la gestión de dependencias front-end)
+- Boostrap 5 (Estilos Front end para incluir clases)
+- Jeststream (Login y Autenticacion de usuario y recuperacion de contraseña)
