@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
@@ -31,15 +30,16 @@ class DataChangeEmailNotification extends Notification
     public function getMessage()
     {
         return (new MailMessage)
-        ->subject('Notificación: :action', ['action' => $this->data['action']])
+            ->subject('Notificación: ' . $this->data['action']) // Interpolación de la variable correctamente en el subject
             ->greeting('Hola,')
-            ->line('Acción: :action', ['action' => $this->data['action']])
-            ->line("Solicitud de: ".$this->ticket->author_name) 
-            ->line("Asusto del soporte: ".$this->ticket->title)
-            ->line("Descripcion: ".Str::limit($this->ticket->content, 200))
+            ->line('Acción: ' . $this->data['action']) // Interpolación de la variable correctamente en el contenido
+            ->line('Solicitud de: ' . $this->ticket->author_name)
+            ->line('Asunto del soporte: ' . $this->ticket->title) // Corregí "Asusto" a "Asunto"
+            ->line('Descripción: ' . Str::limit($this->ticket->content, 200)) // Corregí "Descripcion" a "Descripción"
             ->action('Observa tu Ticket', route('admin.tickets.show', $this->ticket->id))
             ->line('Favor de atenderlo, Muchas Gracias!')
-            ->line(config('app.name') . ' TI')
+            ->line(config . 'LOAD' . ' TI')
             ->salutation(' ');
     }
+
 }
