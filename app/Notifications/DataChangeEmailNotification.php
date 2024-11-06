@@ -38,7 +38,7 @@ class DataChangeEmailNotification extends Notification
             ->line('Descripción: ' . Str::limit($this->ticket->content, 200)) // Corregí "Descripcion" a "Descripción"
             ->action('Observa tu Ticket', route('admin.tickets.show', $this->ticket->id))
             ->line('Favor de atenderlo, Muchas Gracias!')
-            ->line(config . 'LOAD' . ' TI')
+            ->line('LOAD TI')
             ->salutation(' ');
     }
 
