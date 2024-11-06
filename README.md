@@ -1,6 +1,6 @@
-# Web Developer Young Dev
+# Web Developer  Dev Young
 
-# Sistema de Tickets de Soporte - Laravel 8
+# Sistema de Tickets de Soporte TI - Laravel 8
 
 Este repositorio contiene una aplicación web para la gestión de tickets de soporte, desarrollada con **Laravel 8**. El sistema permite a los usuarios crear y gestionar tickets de soporte, a los agentes asignar, responder y cerrar tickets. Además, se incluyen características adicionales como la autenticación de usuarios y roles, y notificaciones en tiempo real.
 
