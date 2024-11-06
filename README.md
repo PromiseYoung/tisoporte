@@ -21,4 +21,4 @@ Antes de ejecutar el proyecto, asegúrate de tener instalados los siguientes req
 - MySQL o SQLite (u otro sistema de base de datos compatible con Laravel)
 - Node.js y npm (para la gestión de dependencias front-end)
 - Boostrap 5 (Estilos Front end para incluir clases)
-- Jeststream (Login y Autenticacion de usuario y recuperacion de contraseña)
+- Laravel Jetstream ​ (Login y Autenticacion de usuario y recuperacion de contraseña)
