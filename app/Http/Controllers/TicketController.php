@@ -52,7 +52,6 @@ class TicketController extends Controller
         $priority = Priority::where('name', $request->priority)->first();
         //Asociar Analista por la categoria que le corresponde
         $user = User::find($category->user_id);
-        
 
         // Agregar los IDs al request
         $request->request->add([
