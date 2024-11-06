@@ -10,6 +10,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; // Incluir el facade DB
 use Illuminate\Support\Str;
+
 // Para generar UUID si es necesario
 
 class TicketController extends Controller
