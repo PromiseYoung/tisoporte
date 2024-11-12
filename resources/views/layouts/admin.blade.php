@@ -26,6 +26,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" rel="stylesheet" />
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     @yield('styles')
 </head>
 
@@ -70,7 +71,6 @@
     <div class="app-body">
         @include('partials.menu')
         <main class="main">
-
             <div style="padding-top: 20px" class="container-fluid">
                 @if (session('message'))
                     <div class="row mb-2">
@@ -139,6 +139,7 @@
             });
 
             $.extend(true, $.fn.dataTable.defaults, {
+                stateSave: true,
                 language: {
                     url: languages['{{ app()->getLocale() }}']
                 },
@@ -164,6 +165,9 @@
                         className: 'btn btn-primary',
                         text: '<i class="fas fa-copy"></i> ' + copyButtonTrans,
                         exportOptions: {
+                            modifier: {
+                                selected: true
+                            },
                             columns: ':visible'
                         }
                     },
@@ -172,6 +176,9 @@
                         className: 'btn btn-success',
                         text: '<i class="fas fa-file-csv"></i> ' + csvButtonTrans,
                         exportOptions: {
+                            modifier: {
+                                selected: true
+                            },
                             columns: ':visible'
                         }
                     },
@@ -180,6 +187,9 @@
                         className: 'btn btn-success',
                         text: '<i class="fas fa-file-excel"></i> ' + excelButtonTrans,
                         exportOptions: {
+                            modifier: {
+                                selected: true
+                            },
                             columns: ':visible'
                         }
                     },
@@ -188,6 +198,9 @@
                         className: 'btn btn-danger',
                         text: '<i class="fas fa-file-pdf"></i> ' + pdfButtonTrans,
                         exportOptions: {
+                            modifier: {
+                                selected: true
+                            },
                             columns: ':visible'
                         }
 
@@ -201,7 +214,6 @@
                             $(win.document.body)
                                 .css('font-size', '10pt')
                                 .prepend(
-
                                     '<h1 style="text-align:center;">Logistica y Administracion</h1>'
                                 )
                                 .prepend(
@@ -220,6 +232,9 @@
                             });
                         },
                         exportOptions: {
+                            modifier: {
+                                selected: true
+                            },
                             columns: ':visible'
                         }
                     },
