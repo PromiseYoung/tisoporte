@@ -58,7 +58,7 @@ class Handler extends ExceptionHandler
                     return response()->view('errors.403', [], 403);
                 case 404:
                     return response()->view('errors.404', [], 404);
-                    // Puedes agregar más casos según sea necesario
+                // Puedes agregar más casos según sea necesario
             }
         }
         // Llama al método padre para manejar otras excepciones
