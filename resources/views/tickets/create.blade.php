@@ -123,6 +123,7 @@
         Dropzone.options.attachmentsDropzone = {
             url: '{{ route('tickets.storeMedia') }}',
             maxFilesize: 2, // MB
+            maxFilesize: 5,
             acceptedFiles: 'image/*',
             addRemoveLinks: true,
             headers: {
