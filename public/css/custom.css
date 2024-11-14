@@ -165,6 +165,7 @@ body.dark-mode .dz-remove,
 body.dark-mode .sidebar-minimizer,
 body.dark-mode .dataTables_processing,
 body.dark-mode .dz-preview,
+body.dark-mode .select2-container--default .select2-selection--multiple .select2-selection__choice,
 body.dark-mode .needsclick {
     background-color: #2d2d2d;
     /* Fondo oscuro para sidebar y nav */
