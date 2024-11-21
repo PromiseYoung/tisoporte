@@ -117,6 +117,7 @@
         'provider' => 'users',
         'table' => 'password_resets',
         'expire' => 10,
+        'throttle' => 5,
       ),
     ),
   ),
