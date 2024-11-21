@@ -72,7 +72,7 @@
       @endforeach
     </select>
   </div>
-  
+
   <div class="form-group mx-2 mb-2">
     <select class="form-control" name="priority">
       <option value="">Prioridades</option>
@@ -81,7 +81,7 @@
       @endforeach
     </select>
   </div>
-  
+
   <div class="form-group mx-2 mb-2">
     <select class="form-control" name="category">
       <option value="">Categorias</option>
