@@ -45,8 +45,10 @@ Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware(['auth'])
         Route::resource($name, $controller);
     }
 
-    // Tickets Routes for Admin
-    Route::resource('tickets', 'TicketsController')->except(['create', 'store']);
+    // Rutas de Tickets usando `resource Admin`
+    Route::resource('tickets', 'TicketsController');
+
+    // Rutas adicionales que no están cubiertas por `resource`
     Route::delete('tickets/destroy', 'TicketsController@massDestroy')->name('tickets.massDestroy');
     Route::post('tickets/media', 'TicketsController@storeMedia')->name('tickets.storeMedia');
     Route::post('tickets/comment/{ticket}', 'TicketsController@storeComment')->name('tickets.storeComment');
