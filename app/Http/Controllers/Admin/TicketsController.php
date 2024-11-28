@@ -33,9 +33,9 @@ class TicketsController extends Controller
             $table->addColumn('actions', '&nbsp;');
 
             $table->editColumn('actions', function ($row) {
-                $viewGate      = 'ticket_show';
-                $editGate      = 'ticket_edit';
-                $deleteGate    = 'ticket_delete';
+                $viewGate = 'ticket_show';
+                $editGate = 'ticket_edit';
+                $deleteGate = 'ticket_delete';
                 $crudRoutePart = 'tickets';
 
                 return view('partials.datatablesActions', compact(
@@ -210,10 +210,10 @@ class TicketsController extends Controller
         ]);
         $user = auth()->user();
         $comment = $ticket->comments()->create([
-            'author_name'   => $user->name,
-            'author_email'  => $user->email,
-            'user_id'       => $user->id,
-            'comment_text'  => $request->comment_text
+            'author_name' => $user->name,
+            'author_email' => $user->email,
+            'user_id' => $user->id,
+            'comment_text' => $request->comment_text
         ]);
 
         $ticket->sendCommentNotification($comment);
