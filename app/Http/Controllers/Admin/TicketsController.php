@@ -117,6 +117,7 @@ class TicketsController extends Controller
         $assigned_to_users = User::whereHas('roles', function ($query) {
             $query->whereId(2);
         })
+            ->orWhere('id', auth()->user()->id)
             ->pluck('name', 'id')
             ->prepend(trans('global.pleaseSelect'), '');
 
@@ -147,6 +148,7 @@ class TicketsController extends Controller
         $assigned_to_users = User::whereHas('roles', function ($query) {
             $query->whereId(2);
         })
+            ->orWhere('id', auth()->user()->id)
             ->pluck('name', 'id')
             ->prepend(trans('global.pleaseSelect'), '');
 
