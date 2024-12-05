@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 
 // Public Routes
 Route::get('/', 'TicketController@create');
+
 
 // Home route with redirection based on permissions
 Route::get('/home', function () {
@@ -55,4 +57,6 @@ Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware(['auth'])
 
     // Audit Logs (Resource Routes)
     Route::resource('audit-logs', 'AuditLogsController')->only(['index', 'show']);
+
+    Route::get('/dashboard', [Controller::class, 'index'])->middleware('prevent.cache');
 });
