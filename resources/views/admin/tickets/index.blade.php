@@ -38,6 +38,9 @@
                             {{ trans('cruds.ticket.fields.category') }}
                         </th>
                         <th>
+                            {{ trans('cruds.ticket.fields.localidad') }}
+                        </th>
+                        <th>
                             {{ trans('cruds.ticket.fields.author_name') }}
                         </th>
                         <th>
@@ -184,6 +187,10 @@
                         render: function(data, type, row) {
                             return '<span style="color:' + row.category_color + '">' + data + '</span>';
                         }
+                    },
+                    {
+                        data: 'localidad_nombre',
+                        name: 'localidad_nombre'
                     },
                     {
                         data: 'author_name',

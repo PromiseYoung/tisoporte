@@ -98,6 +98,23 @@
                     @endif
                 </div>
 
+                <div class="form-group">
+                    <label for="localidad_id">Localidad</label>
+                    <select id="localidad_id" name="localidad"
+                        class="form-control form-control-lg select2 @error('localidad_id') is-invalid @enderror rounded-pill"
+                        required>
+                        @foreach ($localidad as $id => $nombre)
+                            <option value="{{ $id }}"
+                                {{ (old('localidad') ?? (isset($ticket) ? $ticket->localidad_id : null)) == $id ? 'selected' : '' }}>
+                                {{ $nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('localidad_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
                 <div class="form-group {{ $errors->has('author_name') ? 'has-error' : '' }}">
                     <label for="author_name">{{ trans('cruds.ticket.fields.author_name') }}</label>
                     <input type="text" id="author_name" name="author_name" class="form-control form-control-lg"

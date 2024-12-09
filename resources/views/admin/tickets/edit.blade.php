@@ -104,6 +104,23 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="localidad_id">Localidad</label>
+                    <select id="localidad_id" name="localidad_id"
+                        class="form-control select2 @error('localidad_id') is-invalid @enderror rounded-pill" required>
+                        <option selected disabled>Ubicacion de Almacen</option>
+                        @foreach ($localidad as $id => $nombre)
+                            <option value="{{ $id }}"
+                                {{ old('localidad_id', $ticket->localidad_id) == $id ? 'selected' : '' }}>
+                                {{ $nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('localidad_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
                     <label for="author_name">{{ trans('cruds.ticket.fields.author_name') }}</label>
                     <input type="text" id="author_name" name="author_name"
                         class="form-control @error('author_name') is-invalid @enderror"
