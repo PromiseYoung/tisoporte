@@ -55,6 +55,10 @@
                                     <td>{{ $ticket->priority->name }}</td>
                                 </tr>
                                 <tr>
+                                    <th>{{ trans('cruds.ticket.fields.localidad') }}</th>
+                                    <td>{{ $ticket->localidad->nombre }}</td>
+                                </tr>
+                                <tr>
                                     <th>{{ trans('cruds.ticket.fields.author_name') }}</th>
                                     <td>{{ $ticket->author_name }}</td>
                                 </tr>
