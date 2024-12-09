@@ -135,6 +135,7 @@ return [
             'priority_helper' => '',
             'category' => 'Categorias',
             'category_helper' => '',
+            'localidad' => 'Localidad',
             'author_name' => 'Solicitud de:',
             'author_name_helper' => '',
             'author_email' => 'Correo Electronico',
