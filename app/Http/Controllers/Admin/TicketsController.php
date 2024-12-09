@@ -8,6 +8,7 @@ use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroyTicketRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
+use App\Localidad;
 use App\Priority;
 use App\Status;
 use App\Ticket;
@@ -24,7 +25,7 @@ class TicketsController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $query = Ticket::with(['status', 'priority', 'category', 'assigned_to_user', 'comments'])
+            $query = Ticket::with(['status', 'priority', 'category', 'assigned_to_user', 'comments', 'localidad'])
                 ->filterTickets($request)
                 ->select(sprintf('%s.*', (new Ticket)->table));
             $table = Datatables::of($query);
@@ -74,6 +75,10 @@ class TicketsController extends Controller
                 return $row->category ? $row->category->color : '#000000';
             });
 
+            $table->addColumn('localidad_nombre', function ($row) {
+                return $row->localidad ? $row->localidad->nombre : '';  // Usamos el nombre de la localidad
+            });
+
             $table->editColumn('author_name', function ($row) {
                 return $row->author_name ? $row->author_name : "";
             });
@@ -92,7 +97,7 @@ class TicketsController extends Controller
                 return route('admin.tickets.show', $row->id);
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'status', 'priority', 'category', 'assigned_to_user']);
+            $table->rawColumns(['actions', 'placeholder', 'status', 'priority', 'category', 'assigned_to_user', 'localidad']);
 
             return $table->make(true);
         }
@@ -100,8 +105,9 @@ class TicketsController extends Controller
         $priorities = Priority::all();
         $statuses = Status::all();
         $categories = Category::all();
+        $localidades = Localidad::all();
 
-        return view('admin.tickets.index', compact('priorities', 'statuses', 'categories'));
+        return view('admin.tickets.index', compact('priorities', 'statuses', 'categories', 'localidades'));
     }
 
     public function create()
@@ -114,6 +120,8 @@ class TicketsController extends Controller
 
         $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
+        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), '');
+
         $assigned_to_users = User::whereHas('roles', function ($query) {
             $query->whereId(2);
         })
@@ -121,7 +129,7 @@ class TicketsController extends Controller
             ->pluck('name', 'id')
             ->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.tickets.create', compact('statuses', 'priorities', 'categories', 'assigned_to_users'));
+        return view('admin.tickets.create', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'localidad'));
     }
 
     public function store(StoreTicketRequest $request)
@@ -145,6 +153,8 @@ class TicketsController extends Controller
 
         $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
+        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), );
+
         $assigned_to_users = User::whereHas('roles', function ($query) {
             $query->whereId(2);
         })
@@ -152,9 +162,9 @@ class TicketsController extends Controller
             ->pluck('name', 'id')
             ->prepend(trans('global.pleaseSelect'), '');
 
-        $ticket->load('status', 'priority', 'category', 'assigned_to_user');
+        $ticket->load('status', 'priority', 'category', 'assigned_to_user', 'localidad');
 
-        return view('admin.tickets.edit', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'ticket'));
+        return view('admin.tickets.edit', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'ticket', 'localidad'));
     }
 
     public function update(UpdateTicketRequest $request, Ticket $ticket)
@@ -184,7 +194,7 @@ class TicketsController extends Controller
     {
         abort_if(Gate::denies('ticket_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $ticket->load('status', 'priority', 'category', 'assigned_to_user', 'comments');
+        $ticket->load('status', 'priority', 'category', 'assigned_to_user', 'comments', 'localidad');
 
         return view('admin.tickets.show', compact('ticket'));
     }
