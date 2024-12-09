@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Category;
 use App\Http\Controllers\Traits\MediaUploadingTrait;
+use App\Category;
+use App\Localidad;
 use App\Priority;
 use App\Ticket;
 use App\User;
@@ -26,10 +27,11 @@ class TicketController extends Controller
     {
         $categories = Category::all();
         $priorities = Priority::all();
+        $localidades = Localidad::all(); // Obtener todas las localidades
         $users = User::all();
         return view(
             'tickets.create',
-            compact('categories', 'priorities', 'users')
+            compact('categories', 'priorities', 'users', 'localidades')
         );
     }
 
@@ -43,13 +45,14 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         // Validación de los datos
-        $request->validate([
+        $request->validate([W
             'title' => 'required',
             'content' => 'required',
             'author_name' => 'required',
             'author_email' => 'required|email',
             'category' => 'required|exists:categories,name',
             'priority' => 'required|exists:priorities,name',
+            'localidad' => 'required|exists:localidades,nombre'
         ]);
 
         DB::beginTransaction(); // Inicia la transacción
@@ -58,6 +61,7 @@ class TicketController extends Controller
             // Convertir nombres a IDs
             $category = Category::where('name', $request->category)->first();
             $priority = Priority::where('name', $request->priority)->first();
+            $localidad = Localidad::where('nombre', $request->localidad)->first();
 
             // Asociar Analista por la categoria que le corresponde
             $user = User::find($category->user_id);
@@ -66,6 +70,7 @@ class TicketController extends Controller
             $request->request->add([
                 'category_id' => $category->id,
                 'priority_id' => $priority->id,
+                'localidad_id' => $localidad->id,
                 'assigned_to_user_id' => optional($user)->id,
                 'status_id' => 1,
                 'id' => Str::Uuid(),
