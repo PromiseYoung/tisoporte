@@ -45,7 +45,7 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         // Validación de los datos
-        $request->validate([W
+        $request->validate([
             'title' => 'required',
             'content' => 'required',
             'author_name' => 'required',
