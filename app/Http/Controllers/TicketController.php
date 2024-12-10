@@ -73,7 +73,7 @@ class TicketController extends Controller
                 'localidad_id' => $localidad->id,
                 'assigned_to_user_id' => optional($user)->id,
                 'status_id' => 1,
-                'id' => Str::Uuid(),
+                'id' => Str::uuid(),
             ]);
 
             // Crear el ticket en la base de datos
