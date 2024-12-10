@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Localidad;
 use App\Scopes\AgentScope;
 use App\Traits\Auditable;
 use App\Notifications\CommentEmailNotification;
@@ -40,7 +41,9 @@ class Ticket extends Model implements HasMedia
         'author_name',
         'author_email',
         'assigned_to_user_id',
+        'localidad_id',  // Agregar este campo
     ];
+
 
     public static function boot()
     {
@@ -84,6 +87,11 @@ class Ticket extends Model implements HasMedia
     public function assigned_to_user()
     {
         return $this->belongsTo(User::class, 'assigned_to_user_id');
+    }
+
+    public function localidad()
+    {
+        return $this->belongsTo(Localidad::class);
     }
 
     public function scopeFilterTickets($query)
