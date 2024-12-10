@@ -56,7 +56,7 @@
                                 </tr>
                                 <tr>
                                     <th>{{ trans('cruds.ticket.fields.localidad') }}</th>
-                                    <td>{{ $ticket->localidad->nombre }}</td>
+                                    <td>{{ $ticket->localidad->nombre ?? '' }}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ trans('cruds.ticket.fields.author_name') }}</th>
