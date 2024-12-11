@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Category;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroyTicketRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Localidad;
+use App\Category;
 use App\Priority;
 use App\Status;
 use App\Ticket;
 use App\User;
+use DB;
 use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -132,16 +133,38 @@ class TicketsController extends Controller
         return view('admin.tickets.create', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'localidad'));
     }
 
-    public function store(StoreTicketRequest $request)
+   public function store(StoreTicketRequest $request)
     {
-        $ticket = Ticket::create($request->all());
+        // Iniciar una transacción de base de datos
+        DB::beginTransaction();
 
-        foreach ($request->input('attachments', []) as $file) {
-            $ticket->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('attachments');
+        try {
+            // Crear el ticket con los datos del request
+            $ticket = Ticket::create($request->all());
+
+            // Subir los archivos adjuntos
+            foreach ($request->input('attachments', []) as $file) {
+                $ticket->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('attachments');
+            }
+
+            // Confirmar la transacción si todo ha ido bien
+            DB::commit();
+
+            // Redirigir a la lista de tickets con mensaje de éxito
+            return redirect()->route('admin.tickets.index')->with('status', 'Ticket creado exitosamente.');
+
+        } catch (\Exception $e) {
+            // Revertir la transacción si hubo algún error
+            DB::rollBack();
+
+            // Registrar el error para diagnóstico
+            \Log::error('Error al crear el ticket: ' . $e->getMessage());
+
+            // Redirigir con un mensaje de error
+            return redirect()->route('admin.tickets.index')->withErrors(['error' => 'Hubo un problema al crear el ticket. Intenta nuevamente.']);
         }
-
-        return redirect()->route('admin.tickets.index');
     }
+
 
     public function edit(Ticket $ticket)
     {
@@ -217,19 +240,35 @@ class TicketsController extends Controller
 
     public function storeComment(Request $request, Ticket $ticket)
     {
+        // Validación de los datos del comentario
         $request->validate([
             'comment_text' => 'required'
         ]);
+
+        // Obtener el usuario autenticado
         $user = auth()->user();
-        $comment = $ticket->comments()->create([
-            'author_name' => $user->name,
-            'author_email' => $user->email,
-            'user_id' => $user->id,
-            'comment_text' => $request->comment_text
-        ]);
 
-        $ticket->sendCommentNotification($comment);
+        try {
+            // Crear el comentario
+            $comment = $ticket->comments()->create([
+                'author_name' => $user->name,
+                'author_email' => $user->email,
+                'user_id' => $user->id,
+                'comment_text' => $request->comment_text
+            ]);
 
-        return redirect()->back()->withStatus('Comentario agregado con exito!');
+            // Notificar al administrador sobre el nuevo comentario
+            $ticket->sendCommentNotification($comment);
+
+            // Retornar respuesta con éxito
+            return redirect()->back()->withStatus('Comentario agregado con éxito!');
+        } catch (\Exception $e) {
+            // Manejo de errores en caso de falla
+            \Log::error('Error al agregar el comentario: ' . $e->getMessage());
+
+            // Retornar error
+            return redirect()->back()->withErrors('Hubo un error al agregar el comentario. Intenta nuevamente.');
+        }
     }
+
 }
