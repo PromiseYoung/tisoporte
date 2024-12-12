@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Category;
 use App\Localidad;
-use App\Notifications\AssignedTicketNotification;
 use App\Notifications\CommentEmailNotification;
 use App\Priority;
 use App\Ticket;
@@ -128,13 +127,11 @@ class TicketController extends Controller
             'comment_text' => $request->comment_text,
         ]);
 
-
         // Verifica si hay un analista asignado al ticket
         if ($ticket->assigned_to_user) {
             // Enviar la notificación al analista asignado
             $ticket->assigned_to_user->notify(new CommentEmailNotification($comment));
         }
-
         return redirect()->back()->withStatus('Comentario agregado, el administrador observará el seguimiento de tu soporte. Gracias por tu comprensión.');
     }
 }
