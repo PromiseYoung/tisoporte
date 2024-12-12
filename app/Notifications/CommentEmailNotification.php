@@ -40,15 +40,14 @@ class CommentEmailNotification extends Notification
      */
     public function toMail($notifiable)
     {
-
-
         return (new MailMessage)
-            ->subject('Nuevo comentario en el ticket: ' . $this->comment->ticket->title) // Título con el nombre del ticket
-            ->greeting('Hola ' . $notifiable->name . ',') // Saludo al analista
-            ->line('El usuario ' . $this->comment->author_name . ' ha agregado un comentario al ticket asignado.') // Notificación de comentario
-            ->line('Comentario: ' . $this->comment->comment_text) // El contenido del comentario
-            ->action('Ver ticket', route('tickets.show', $this->comment->ticket->id)) // Acción con el link al ticket
-            ->line('Gracias por atender este ticket y por tu excelente trabajo.') // Mensaje final
-            ->salutation('Saludos, Equipo de Soporte');
+            ->subject('Nuevo comentario en el ticket: ' . $this->comment->ticket->title)
+            ->greeting('Hola,')
+            ->line('comentarios en el ticket: ' . $this->comment->ticket->title . ':')
+            ->line('')
+            ->line(Str::limit($this->comment->comment_text, 500))
+            ->action('Ver ticket completo', route(optional($notifiable)->id ? 'admin.tickets.show' : 'tickets.show', $this->comment->ticket->id))
+            ->line('Gracias por usar nuestro sistema de soporte.')
+            ->salutation('SALUDOS, LOAD TI');
     }
 }
