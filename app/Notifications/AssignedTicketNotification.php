@@ -42,20 +42,13 @@ class AssignedTicketNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        // Aseguramos que la propiedad $ticket esté definida y tenga los valores esperados.
-        $ticketTitle = $this->ticket->title ?? 'Título no disponible';
-
-        // Personalizamos el saludo mostrando el nombre del usuario que recibe la notificación.
-        $userName = $notifiable->name ?? 'Usuario';
-
         return (new MailMessage)
-            ->subject('¡Se te ha asignado un nuevo Ticket!')
-            ->greeting('Hola ' . $userName . ',')  // Usamos el nombre del usuario en el saludo
-            ->line('Se ha solicitado un nuevo soporte:')
-            ->line('')
-            ->line('Título del ticket: ' . $ticketTitle)  // Mostramos el título del ticket
+            ->subject('Se te ha asignado un nuevo ticket')
+            ->greeting('Hola,')
+            ->line('Se te ha asignado un nuevo soporte: ' . $this->ticket->title)
             ->action('Ver ticket', route('admin.tickets.show', $this->ticket->id))
-            ->line('Gracias por usar nuestro sistema de soporte.')
-            ->salutation('Saludos, LOAD TI');
+            ->line('Gracias por el apoyo')
+            ->salutation('LOAD TI, GRACIAS ');
     }
+
 }
