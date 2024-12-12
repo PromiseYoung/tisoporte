@@ -133,7 +133,7 @@ class TicketsController extends Controller
         return view('admin.tickets.create', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'localidad'));
     }
 
-   public function store(StoreTicketRequest $request)
+    public function store(StoreTicketRequest $request)
     {
         // Iniciar una transacción de base de datos
         DB::beginTransaction();
@@ -240,35 +240,19 @@ class TicketsController extends Controller
 
     public function storeComment(Request $request, Ticket $ticket)
     {
-        // Validación de los datos del comentario
         $request->validate([
             'comment_text' => 'required'
         ]);
-
-        // Obtener el usuario autenticado
         $user = auth()->user();
+        $comment = $ticket->comments()->create([
+            'author_name' => $user->name,
+            'author_email' => $user->email,
+            'user_id' => $user->id,
+            'comment_text' => $request->comment_text
+        ]);
 
-        try {
-            // Crear el comentario
-            $comment = $ticket->comments()->create([
-                'author_name' => $user->name,
-                'author_email' => $user->email,
-                'user_id' => $user->id,
-                'comment_text' => $request->comment_text
-            ]);
-
-            // Notificar al administrador sobre el nuevo comentario
-            $ticket->sendCommentNotification($comment);
-
-            // Retornar respuesta con éxito
-            return redirect()->back()->withStatus('Comentario agregado con éxito!');
-        } catch (\Exception $e) {
-            // Manejo de errores en caso de falla
-            \Log::error('Error al agregar el comentario: ' . $e->getMessage());
-
-            // Retornar error
-            return redirect()->back()->withErrors('Hubo un error al agregar el comentario. Intenta nuevamente.');
-        }
+        $ticket->sendCommentNotification($comment);
+        return redirect()->back()->withStatus('Comentario agregado con exito!');
     }
 
 }
