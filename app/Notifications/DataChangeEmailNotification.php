@@ -55,21 +55,19 @@ class DataChangeEmailNotification extends Notification
      */
     public function getMessage()
     {
-        // Verificamos si $this->ticket tiene los datos correctos
-        $ticketTitle = $this->ticket->title ?? 'No disponible';
-        $ticketContent = Str::limit($this->ticket->content, 200) ?? 'No hay descripción disponible';
-        $ticketAuthor = $this->ticket->author_name ?? 'Desconocido';
-
+        $analista = $this->ticket->assigned_to_user;
+        
         return (new MailMessage)
-            ->subject('Notificación: ' . $this->data['action']) // Interpolación de la variable correctamente en el subject
-            ->greeting('Solicito de tu apoyo,')
-            ->line('Te ha solicitado: ' . $ticketAuthor)
-            ->line('')
-            ->line('Asunto del soporte: ' . $ticketTitle) // Corregí "Asusto" a "Asunto"
-            ->line('')
-            ->line('Descripción: ' . $ticketContent) // Corregí "Descripcion" a "Descripción"
-            ->action('Consultar Ticket', route('admin.tickets.show', $this->ticket->id))
-            ->line('Por favor de atenderlo, Muchas Gracias!')
-            ->salutation('Saludos, LOAD TI');
+            ->subject($this->data['action'])
+            ->greeting('Hola,'  . $analista->name . ',')
+            ->line($this->data['action'])
+            ->line("Usuario: " . $this->ticket->author_name)
+            ->line("Nombre del ticket: " . $this->ticket->title)
+            ->line("Descripción breve: " . Str::limit($this->ticket->content, 200))
+            ->action('Ver ticket completo', route('admin.tickets.show', $this->ticket->id))
+            ->line('Gracias')
+            ->salutation('Saludos');
     }
+
+
 }
