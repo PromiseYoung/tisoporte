@@ -240,21 +240,24 @@ class TicketsController extends Controller
 
     public function storeComment(Request $request, Ticket $ticket)
     {
-        return $ticket->status->name == 'CERRADO'
-            ? redirect()->back()->withErrors(['error' => 'No puedes agregar comentarios a un ticket cerrado.'])
-            : null;
+        // Verificar si el ticket está cerrado
+        if ($ticket->status->name == 'CERRADO') {
+            return redirect()->back()->withErrors(['error' => 'No puedes agregar comentarios a un ticket cerrado.']);
+        }
 
-        $request->validate(['comment_text' => 'required']);
-
+        $request->validate([
+            'comment_text' => 'required'
+        ]);
+        $user = auth()->user();
         $comment = $ticket->comments()->create([
-            
-            'author_name' => $ticket->author_name,
-            'author_email' => $ticket->author_email,
-            'comment_text' => $request->comment_text,
+            'author_name'   => $user->name,
+            'author_email'  => $user->email,
+            'user_id'       => $user->id,
+            'comment_text'  => $request->comment_text
         ]);
 
-        $ticket->assigned_to_user?->notify(new CommentEmailNotification($comment));
+        $ticket->sendCommentNotification($comment);
 
-        return redirect()->back()->withStatus('Comentario agregado con éxito!');
+        return redirect()->back()->withStatus('Comentario agregado con exito!');
     }
 }
