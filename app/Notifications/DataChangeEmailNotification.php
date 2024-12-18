@@ -56,17 +56,17 @@ class DataChangeEmailNotification extends Notification
     public function getMessage()
     {
         $analista = $this->ticket->assigned_to_user;
-        
+
         return (new MailMessage)
             ->subject($this->data['action'])
-            ->greeting('Hola,'  . $analista->name . ',')
-            ->line($this->data['action'])
+            ->greeting('Hola,' . $analista->name . '👋')
+            ->line('')
             ->line("Usuario: " . $this->ticket->author_name)
-            ->line("Nombre del ticket: " . $this->ticket->title)
+            ->line("Nombre del Soporte: " . $this->ticket->title)
             ->line("Descripción breve: " . Str::limit($this->ticket->content, 200))
             ->action('Ver ticket completo', route('admin.tickets.show', $this->ticket->id))
-            ->line('Gracias')
-            ->salutation('Saludos');
+            ->line('Gracias por el apoyo ')
+            ->salutation('Exito en tu soporte');
     }
 
 
