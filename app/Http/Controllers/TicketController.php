@@ -85,13 +85,10 @@ class TicketController extends Controller
                 $ticket->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('attachments');
             }
 
-
             DB::commit(); // Si todo va bien, confirma la transacción
-
 
             // Retornar la respuesta de éxito
             return redirect()->back()->withStatus('Tu ticket ha sido enviado, nos pondremos en contacto contigo. Puedes ver el estado del ticket <a href="' . route('tickets.show', $ticket->id) . '">Clic</a>');
-
         } catch (\Exception $e) {
             DB::rollBack(); // Si algo falla, revierte la transacción
 
@@ -109,6 +106,7 @@ class TicketController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Ticket $ticket)
+
     {
         $ticket->load('comments');
 
@@ -119,6 +117,8 @@ class TicketController extends Controller
 
     public function storeComment(Request $request, Ticket $ticket)
     {
+        return $ticket->status->name == 'CERRADO'
+            ? redirect()->back()->withErrors(['error' => 'No puedes agregar comentarios a un ticket cerrado.']) : null;
         $request->validate(['comment_text' => 'required']);
 
         $comment = $ticket->comments()->create([
@@ -127,11 +127,8 @@ class TicketController extends Controller
             'comment_text' => $request->comment_text,
         ]);
 
-        // Verifica si hay un analista asignado al ticket
-        if ($ticket->assigned_to_user) {
-            // Enviar la notificación al analista asignado
-            $ticket->assigned_to_user->notify(new CommentEmailNotification($comment));
-        }
+        $ticket->assigned_to_user?->notify(new CommentEmailNotification($comment));
+
         return redirect()->back()->withStatus('Comentario agregado, el administrador observará el seguimiento de tu soporte. Gracias por tu comprensión.');
     }
 }

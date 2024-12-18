@@ -9,6 +9,7 @@ use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Localidad;
 use App\Category;
+use App\Notifications\CommentEmailNotification;
 use App\Priority;
 use App\Status;
 use App\Ticket;
@@ -152,7 +153,6 @@ class TicketsController extends Controller
 
             // Redirigir a la lista de tickets con mensaje de éxito
             return redirect()->route('admin.tickets.index')->with('status', 'Ticket creado exitosamente.');
-
         } catch (\Exception $e) {
             // Revertir la transacción si hubo algún error
             DB::rollBack();
@@ -176,7 +176,7 @@ class TicketsController extends Controller
 
         $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), );
+        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'),);
 
         $assigned_to_users = User::whereHas('roles', function ($query) {
             $query->whereId(2);
@@ -240,19 +240,21 @@ class TicketsController extends Controller
 
     public function storeComment(Request $request, Ticket $ticket)
     {
-        $request->validate([
-            'comment_text' => 'required'
-        ]);
-        $user = auth()->user();
+        return $ticket->status->name == 'CERRADO'
+            ? redirect()->back()->withErrors(['error' => 'No puedes agregar comentarios a un ticket cerrado.'])
+            : null;
+
+        $request->validate(['comment_text' => 'required']);
+
         $comment = $ticket->comments()->create([
-            'author_name' => $user->name,
-            'author_email' => $user->email,
-            'user_id' => $user->id,
-            'comment_text' => $request->comment_text
+            
+            'author_name' => $ticket->author_name,
+            'author_email' => $ticket->author_email,
+            'comment_text' => $request->comment_text,
         ]);
 
-        $ticket->sendCommentNotification($comment);
-        return redirect()->back()->withStatus('Comentario agregado con exito!');
-    }
+        $ticket->assigned_to_user?->notify(new CommentEmailNotification($comment));
 
+        return redirect()->back()->withStatus('Comentario agregado con éxito!');
+    }
 }
