@@ -115,31 +115,46 @@ class Ticket extends Model implements HasMedia
 
     public function sendCommentNotification($comment)
     {
-        $users = \App\User::where(function ($q) {
-            $q->whereHas('roles', function ($q) {
-                return $q->where('title', 'Analista TI');
-            })
-                ->where(function ($q) {
-                    $q->whereHas('comments', function ($q) {
-                        return $q->whereTicketId($this->id);
-                    })
-                        ->orWhereHas('tickets', function ($q) {
-                            return $q->whereId($this->id);
-                        });
-                });
+        // Crear la consulta para obtener los usuarios que deben recibir la notificación
+        $usersQuery = \App\User::query();
+
+        // Filtrar usuarios con el rol 'Analista TI' relacionados al ticket
+        $usersQuery->whereHas('roles', function ($q) {
+            $q->where('title', 'Analista TI');
         })
-            ->when(!$comment->user_id && !$this->assigned_to_user_id, function ($q) {
-                $q->orWhereHas('roles', function ($q) {
-                    return $q->where('title', 'Admin');
-                });
-            })
-            ->when($comment->user, function ($q) use ($comment) {
-                $q->where('id', '!=', $comment->user_id);
-            })
-            ->get();
+            ->where(function ($q) {
+                // Filtrar usuarios que tengan comentarios sobre este ticket
+                $q->whereHas('comments', function ($q) {
+                    $q->whereTicketId($this->id);
+                })
+                    // O usuarios asignados a este ticket
+                    ->orWhereHas('tickets', function ($q) {
+                        $q->whereId($this->id);
+                    });
+            });
+
+        // Incluir administradores si no hay comentarios o asignaciones
+        if (!$comment->user_id && !$this->assigned_to_user_id) {
+            $usersQuery->orWhereHas('roles', function ($q) {
+                $q->where('title', 'Admin');
+            });
+        }
+
+        // Excluir al usuario que hizo el comentario
+        if ($comment->user_id) {
+            $usersQuery->where('id', '!=', $comment->user_id);
+        }
+
+        // Obtener los usuarios
+        $users = $usersQuery->get();
+
+        // Crear la notificación
         $notification = new CommentEmailNotification($comment);
 
+        // Enviar la notificación a los usuarios
         Notification::send($users, $notification);
+
+        // Si el comentario tiene un autor y el ticket tiene un correo de autor, notificar al autor
         if ($comment->user_id && $this->author_email) {
             Notification::route('mail', $this->author_email)->notify($notification);
         }

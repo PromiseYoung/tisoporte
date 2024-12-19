@@ -46,7 +46,7 @@ class CommentEmailNotification extends Notification
             ->line('Asunto del ticket: ' . $this->comment->ticket->title . '')
             ->line('')
             ->line('')
-            ->line(Str::limit('Respuesta: '.$this->comment->comment_text, 500))
+            ->line(Str::limit('Respuesta: ' . $this->comment->comment_text, 500))
             ->action('Ver ticket completo', route(optional($notifiable)->id ? 'admin.tickets.show' : 'tickets.show', $this->comment->ticket->id))
             ->line('')
             ->line('')

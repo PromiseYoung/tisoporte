@@ -4,12 +4,12 @@
     <div class="container my-5">
         <div class="row justify-content-center">
             <div class="col-md-10">
+                <!-- Mostrar mensaje de éxito si existe -->
                 @if (session('status'))
                     <div class="alert alert-success" role="alert">
                         {{ session('status') }}
                     </div>
                 @endif
-
                 <div class="card border-0 shadow-lg rounded">
                     <div class="card-header bg-success text-white text-center rounded-top">
                         <h5 class="mb-0">Ticket #{{ $ticket->id }}</h5>
@@ -94,19 +94,44 @@
 
                         <form action="{{ route('tickets.storeComment', $ticket->id) }}" method="POST">
                             @csrf
+
+                            <!-- Mostrar el mensaje de error si el ticket está cerrado -->
+                            @if ($errors->has('error'))
+                                <div class="alert alert-danger" role="alert">
+                                    {{ $errors->first('error') }}
+                                </div>
+                            @endif
+
                             <div class="form-group">
+                                <!-- Etiqueta y campo de texto para añadir un comentario -->
                                 <label for="comment_text">Añadir un comentario</label>
-                                <textarea class="form-control @error('comment_text') is-invalid @enderror" id="comment_text" name="comment_text"
-                                    rows="3" required></textarea>
+
+                                <!-- Mostrar el área de texto solo si el ticket no está cerrado -->
+                                @if ($ticket->status->name != 'CERRADO')
+                                    <textarea class="form-control @error('comment_text') is-invalid @enderror" id="comment_text" name="comment_text"
+                                        rows="3" required></textarea>
+                                @else
+                                    <!-- Mostrar mensaje indicativo si el ticket está cerrado -->
+                                    <div class="alert alert-warning" role="alert">
+                                        Este ticket está cerrado, por lo que no puedes agregar más comentarios.
+                                    </div>
+                                @endif
+
+                                <!-- Mensajes de error para el campo de texto si existe -->
                                 @error('comment_text')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary mb-3 rounded-pill">@lang('global.submit')</button>
-                            </div>
+
+                            <!-- Mostrar el botón solo si el ticket no está cerrado -->
+                            @if ($ticket->status->name != 'CERRADO')
+                                <div class="text-center">
+                                    <button type="submit"
+                                        class="btn btn-primary mb-3 rounded-pill">@lang('global.submit')</button>
+                                </div>
+                            @endif
                         </form>
                     </div>
                 </div>

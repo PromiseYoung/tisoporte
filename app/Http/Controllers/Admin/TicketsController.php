@@ -9,7 +9,6 @@ use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Localidad;
 use App\Category;
-use App\Notifications\CommentEmailNotification;
 use App\Priority;
 use App\Status;
 use App\Ticket;
@@ -244,7 +243,6 @@ class TicketsController extends Controller
         if ($ticket->status->name == 'CERRADO') {
             return redirect()->back()->withErrors(['error' => 'No puedes agregar comentarios a un ticket cerrado.']);
         }
-
         $request->validate([
             'comment_text' => 'required'
         ]);
@@ -255,9 +253,7 @@ class TicketsController extends Controller
             'user_id'       => $user->id,
             'comment_text'  => $request->comment_text
         ]);
-
         $ticket->sendCommentNotification($comment);
-
-        return redirect()->back()->withStatus('Comentario agregado con exito!');
+        return redirect()->back()->withStatus('Comentario enviado al usuario con exito!');
     }
 }
