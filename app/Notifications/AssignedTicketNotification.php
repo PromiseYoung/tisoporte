@@ -42,14 +42,16 @@ class AssignedTicketNotification extends Notification
      */
     public function toMail($notifiable)
     {
+        // Puedes acceder a las propiedades del modelo notifiable
+        $userName = $notifiable->name;
+
         return (new MailMessage)
             ->subject('🎫 Se te ha asignado un nuevo ticket')
-            ->greeting('Hola, 👋')
+            ->greeting('Hola,  ' . $userName . ' 👋')
             ->line('📌 Se te ha asignado un nuevo soporte: ' . $this->ticket->title)
             ->action('Ver ticket', route('admin.tickets.show', $this->ticket->id))
             ->line('')
             ->line('Gracias por el apoyo')
             ->salutation('LOAD TI');
     }
-
 }

@@ -39,14 +39,15 @@ class CommentEmailNotification extends Notification
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
+
     {
         return (new MailMessage)
             ->subject('💬 Tienes un comentario en el ticket de soporte')
-            ->greeting('Hola! 👋 ,' . $this->comment->ticket->author_name . '')
             ->line('Asunto del ticket: ' . $this->comment->ticket->title . '')
+            ->greeting('Hola! 👋 ' . $this->comment->ticket->author_name . '')
             ->line('')
             ->line('')
-            ->line(Str::limit('Respuesta: ' . $this->comment->comment_text, 500))
+            ->line(Str::limit('Respuesta: ' . $this->comment->comment_text, 50))
             ->action('Ver ticket completo', route(optional($notifiable)->id ? 'admin.tickets.show' : 'tickets.show', $this->comment->ticket->id))
             ->line('')
             ->line('')

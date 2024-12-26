@@ -62,12 +62,14 @@ class DataChangeEmailNotification extends Notification
             ->greeting('Hola,' . $analista->name . '👋')
             ->line('')
             ->line("Usuario: " . $this->ticket->author_name)
+            ->line('')
+            ->line('')
             ->line("Nombre del Soporte: " . $this->ticket->title)
+            ->line('')
+            ->line('')
             ->line("Descripción breve: " . Str::limit($this->ticket->content, 200))
             ->action('Ver ticket completo', route('admin.tickets.show', $this->ticket->id))
             ->line('Gracias por el apoyo ')
             ->salutation('Exito en tu soporte');
     }
-
-
 }
