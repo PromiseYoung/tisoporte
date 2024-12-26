@@ -124,7 +124,8 @@
                     <label for="author_name">{{ trans('cruds.ticket.fields.author_name') }}</label>
                     <input type="text" id="author_name" name="author_name"
                         class="form-control @error('author_name') is-invalid @enderror"
-                        value="{{ old('author_name', isset($ticket) ? $ticket->author_name : '') }}">
+                        value="{{ old('author_name', isset($ticket) ? $ticket->author_name : '') }}"
+                        placeholder="Coloca el nombre del usuario a atender" required>
                     @error('author_name')
                         <div class="invalid-feedback">
                             {{ $message }}
@@ -139,7 +140,8 @@
                     <label for="author_email">{{ trans('cruds.ticket.fields.author_email') }}</label>
                     <input type="text" id="author_email" name="author_email"
                         class="form-control @error('author_email') is-invalid @enderror"
-                        value="{{ old('author_email', isset($ticket) ? $ticket->author_email : '') }}">
+                        value="{{ old('author_email', isset($ticket) ? $ticket->author_email : '') }}"
+                        placeholder="Correo del Analista TI" required>
                     @error('author_email')
                         <div class="invalid-feedback">
                             {{ $message }}
