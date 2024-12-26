@@ -23,6 +23,9 @@ Auth::routes(['register' => false]);
 Route::resource('tickets', 'TicketController')->only(['show', 'create', 'store']);
 Route::post('tickets/media', 'TicketController@storeMedia')->name('tickets.storeMedia');
 Route::post('tickets/comment/{ticket}', 'TicketController@storeComment')->name('tickets.storeComment');
+// RESET PASSWORD ROUTES
+Route::get('password/reset', [ResetPasswordController::class, 'showResetForm'])->name('password.request');
+Route::post('password/reset', [ResetPasswordController::class, 'reset']);
 
 // Admin Routes (requires authentication)
 Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware(['auth'])->group(function () {
@@ -41,11 +44,16 @@ Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware(['auth'])
         'comments' => 'CommentsController',
     ];
 
-    // Resourceful routes and Mass Destroy for admin resources
+    // Definir rutas de eliminación masiva con una URL diferente
     foreach ($resources as $name => $controller) {
-        Route::delete("{$name}/destroy", "{$controller}@massDestroy")->name("{$name}.massDestroy");
+        // Usa una URL específica para la eliminación masiva
+        Route::delete("{$name}/mass-destroy", "{$controller}@massDestroy")->name("{$name}.massDestroy");
+
+        // Rutas de recursos
         Route::resource($name, $controller);
     }
+
+
 
     // Rutas de Tickets usando `resource Admin`
     Route::resource('tickets', 'TicketsController');
