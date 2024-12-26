@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Gate;
@@ -23,8 +24,8 @@ Auth::routes(['register' => false]);
 Route::resource('tickets', 'TicketController')->only(['show', 'create', 'store']);
 Route::post('tickets/media', 'TicketController@storeMedia')->name('tickets.storeMedia');
 Route::post('tickets/comment/{ticket}', 'TicketController@storeComment')->name('tickets.storeComment');
-// RESET PASSWORD ROUTES
-Route::get('password/reset', [ResetPasswordController::class, 'showResetForm'])->name('password.request');
+
+// RESET PASSWORD ROUTE
 Route::post('password/reset', [ResetPasswordController::class, 'reset']);
 
 // Admin Routes (requires authentication)
