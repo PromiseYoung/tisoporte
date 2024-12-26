@@ -118,7 +118,7 @@
                 <div class="form-group {{ $errors->has('author_name') ? 'has-error' : '' }}">
                     <label for="author_name">{{ trans('cruds.ticket.fields.author_name') }}</label>
                     <input type="text" id="author_name" name="author_name" class="form-control form-control-lg"
-                        value="{{ old('author_name', isset($ticket) ? $ticket->author_name : '') }}">
+                        value="{{ old('author_name', isset($ticket) ? $ticket->author_name : '') }}" required>
                     @if ($errors->has('author_name'))
                         <div class="invalid-feedback d-block">
                             {{ $errors->first('author_name') }}
@@ -132,7 +132,7 @@
                 <div class="form-group {{ $errors->has('author_email') ? 'has-error' : '' }}">
                     <label for="author_email">{{ trans('cruds.ticket.fields.author_email') }}</label>
                     <input type="email" id="author_email" name="author_email" class="form-control form-control-lg"
-                        value="{{ old('author_email', isset($ticket) ? $ticket->author_email : '') }}">
+                        value="{{ old('author_email', isset($ticket) ? $ticket->author_email : '') }}" required>
                     @if ($errors->has('author_email'))
                         <div class="invalid-feedback d-block">
                             {{ $errors->first('author_email') }}
