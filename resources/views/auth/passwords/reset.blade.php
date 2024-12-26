@@ -30,7 +30,8 @@
 
                         <div class="form-group mb-4">
                             <label for="password" class="form-label">{{ trans('global.login_password') }}</label>
-                            <input id="password" type="password" name="password" class="form-control" required
+                            <input id="password" type="password" name="password"
+                                class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" required
                                 placeholder="{{ trans('global.login_password') }}">
 
                             @if ($errors->has('password'))
@@ -46,7 +47,7 @@
                             <input id="password-confirm" type="password" name="password_confirmation" class="form-control"
                                 required placeholder="{{ trans('global.login_password_confirmation') }}">
                         </div>
-                        
+
                         <div class="d-flex justify-content-center">
                             <button type="submit" class="btn btn-success btn-lg">
                                 {{ trans('global.reset_password') }}
