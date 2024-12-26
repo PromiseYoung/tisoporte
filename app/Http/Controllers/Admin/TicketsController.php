@@ -79,7 +79,6 @@ class TicketsController extends Controller
             $table->addColumn('localidad_nombre', function ($row) {
                 return $row->localidad ? $row->localidad->nombre : '';  // Usamos el nombre de la localidad
             });
-
             $table->editColumn('author_name', function ($row) {
                 return $row->author_name ? $row->author_name : "";
             });
@@ -121,7 +120,7 @@ class TicketsController extends Controller
 
         $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'),);
 
         $assigned_to_users = User::whereHas('roles', function ($query) {
             $query->whereId(2);
@@ -202,7 +201,6 @@ class TicketsController extends Controller
         }
 
         $media = $ticket->attachments->pluck('file_name')->toArray();
-
         foreach ($request->input('attachments', []) as $file) {
             if (count($media) === 0 || !in_array($file, $media)) {
                 $ticket->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('attachments');
@@ -240,7 +238,7 @@ class TicketsController extends Controller
     public function storeComment(Request $request, Ticket $ticket)
     {
         // Verificar si el ticket está cerrado
-        if ($ticket->status->name == 'CERRADO') {
+        if ($ticket->status->name === 'CERRADO') {
             return redirect()->back()->withErrors(['error' => 'No puedes agregar comentarios a un ticket cerrado.']);
         }
         $request->validate([
@@ -250,6 +248,7 @@ class TicketsController extends Controller
         $comment = $ticket->comments()->create([
             'author_name'   => $user->name,
             'author_email'  => $user->email,
+
             'user_id'       => $user->id,
             'comment_text'  => $request->comment_text
         ]);
