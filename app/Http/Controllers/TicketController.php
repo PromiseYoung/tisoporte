@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Category;
 use App\Localidad;
-use App\Notifications\CommentEmailNotification;
 use App\Priority;
 use App\Ticket;
 use App\User;
@@ -118,7 +117,7 @@ class TicketController extends Controller
     public function storeComment(Request $request, Ticket $ticket)
     {
         // Verificar si el ticket está cerrado
-        if ($ticket->status->name == 'CERRADO') {
+        if ($ticket->status->name === 'CERRADO') {
             return redirect()->back()->withErrors(['error' => 'No puedes agregar comentarios a un ticket cerrado.']);
         }
         $request->validate(['comment_text' => 'required']);
