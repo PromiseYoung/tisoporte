@@ -85,5 +85,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Category::class, 'category_id');
     }
-
 }
