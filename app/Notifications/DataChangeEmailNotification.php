@@ -55,21 +55,29 @@ class DataChangeEmailNotification extends Notification
      */
     public function getMessage()
     {
+        // Extraemos la información del ticket y el analista
         $analista = $this->ticket->assigned_to_user;
+        $ticketTitle = $this->ticket->title;
+        $authorName = $this->ticket->author_name;
+        $ticketContent = Str::limit($this->ticket->content, 200);
+        $ticketId = $this->ticket->id;
 
+        // Creamos la ruta al ticket
+        $ticketRoute = route('admin.tickets.show', $ticketId);
+
+        // Retornamos la notificación
         return (new MailMessage)
             ->subject($this->data['action'])
-            ->greeting('Hola,' . $analista->name . '👋')
+            ->greeting(__('Hola, :name 👋', ['name' => $analista->name]))
             ->line('')
-            ->line("Usuario: " . $this->ticket->author_name)
+            ->line(__('Usuario: :name', ['name' => $authorName]))
+            ->line('')
+            ->line(__('Nombre del Soporte: :title', ['title' => $ticketTitle]))
             ->line('')
             ->line('')
-            ->line("Nombre del Soporte: " . $this->ticket->title)
-            ->line('')
-            ->line('')
-            ->line("Descripción breve: " . Str::limit($this->ticket->content, 200))
-            ->action('Ver ticket completo', route('admin.tickets.show', $this->ticket->id))
-            ->line('Gracias por el apoyo ')
-            ->salutation('Exito en tu soporte');
+            ->line(__('Descripción breve: :content', ['content' => $ticketContent]))
+            ->action(__('Ver ticket completo'), $ticketRoute)
+            ->line(__('Gracias por el apoyo.'))
+            ->salutation(__('Éxito en tu soporte.'));
     }
 }
