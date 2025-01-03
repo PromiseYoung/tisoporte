@@ -1,6 +1,5 @@
 <div class="sidebar bg-dark">
     <nav class="sidebar-nav">
-
         <ul class="nav flex-column">
             @can('dashboard_access')
                 <li class="nav-item">
@@ -10,7 +9,6 @@
                     </a>
                 </li>
             @endcan
-
             @can('user_management_access')
                 <li class="nav-item nav-dropdown">
                     <a class="nav-link nav-dropdown-toggle text-white" href="#">
@@ -45,6 +43,7 @@
                                 </a>
                             </li>
                         @endcan
+
                         @can('audit_log_access')
                             <li class="nav-item">
                                 <a href="{{ route('admin.audit-logs.index') }}"
