@@ -42,7 +42,15 @@
         <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <ul class="nav navbar-nav ml-auto">
+        @auth
+            <ul class="nav-item ml-auto">
+                <ul class="text-center">
+                    <h5 class="fw-bold text-primary mb-0 fs-md-4 fs-5">BIENVENIDO. </h5>
+                    <h5 class="text-success mb-0 fs-md-4 fs-5">{{ Auth::user()->name }}</h5>
+                </ul>
+            </ul>
+        @endauth
+        <ul class="nav navbar-nav ml-auto d-flex justify-content-center align-items-center">
             @if (count(config('panel.available_languages', [])) > 1)
                 <li class="nav-item dropdown d-md-down-none">
                     <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
@@ -59,15 +67,14 @@
                     </div>
                 </li>
             @endif
-
             {{-- BOTON DE MOOD DARK-LIGHT --}}
-            <button id="theme-toggle" class="btn btn-light mr-3">
-                <i id="theme-icon" class="fa-regular fa-spin-pulse fa-thin fa-sun"></i>
-            </button>
-
+            <li class="nav-item">
+                <button id="theme-toggle" class="btn btn-light">
+                    <i id="theme-icon" class="fa-regular fa-spin-pulse fa-thin fa-sun"></i>
+                </button>
+            </li>
         </ul>
     </header>
-
     <div class="app-body">
         @include('partials.menu')
         <main class="main">
@@ -94,6 +101,7 @@
         <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
             {{ csrf_field() }}
         </form>
+
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
