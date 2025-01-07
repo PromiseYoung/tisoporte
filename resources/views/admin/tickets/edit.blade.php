@@ -141,7 +141,7 @@
                     <input type="text" id="author_email" name="author_email"
                         class="form-control @error('author_email') is-invalid @enderror"
                         value="{{ old('author_email', isset($ticket) ? $ticket->author_email : '') }}"
-                        placeholder="Correo del Analista TI" required>
+                        placeholder="Correo del Usuario" required>
                     @error('author_email')
                         <div class="invalid-feedback">
                             {{ $message }}
