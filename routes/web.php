@@ -67,5 +67,5 @@ Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware(['auth'])
     // Audit Logs (Resource Routes)
     Route::resource('audit-logs', 'AuditLogsController')->only(['index', 'show']);
 
-    Route::get('/dashboard', [Controller::class, 'index'])->middleware('prevent.cache');
+    Route::get('/home', [Controller::class, 'index'])->middleware('prevent.cache');
 });
