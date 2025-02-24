@@ -105,7 +105,6 @@ class TicketController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Ticket $ticket)
-
     {
         $ticket->load('comments');
 
