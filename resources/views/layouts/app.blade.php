@@ -32,6 +32,7 @@
             font-family: 'Nunito', sans-serif;
         }
 
+        /* Carousel */
         .carousel {
             position: fixed;
             top: 0;
@@ -39,125 +40,130 @@
             width: 100%;
             height: 100%;
             min-width: 100%;
-
+            overflow: hidden;
         }
 
         .carousel-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Cambié a cover para mejor visualización */
-            display: inline;
-            /* Comienza desde el centro */
-            transform-origin: initial;
-            /* Origen de transformación en el centro */
-            transition: opacity 3s ease-in;
-            /* Transición suave de opacidad */
+            transition: opacity 2s ease-in-out;
         }
 
-        @keyframes slide {
-            0% {
+        @keyframes fadeInUp {
+            from {
                 opacity: 0;
-                transform: scaleX(0);
-                /* Comienza desde el centro */
+                transform: translateY(20px);
             }
 
-            10% {
+            to {
                 opacity: 1;
-                /* Muestra la imagen */
-                transform: scaleX(1);
-                /* Expande hasta ocupar todo el ancho */
-            }
-
-            30% {
-                opacity: 1;
-                /* Mantiene la imagen visible */
-                transform: scaleX(1);
-            }
-
-            40% {
-                opacity: 0;
-                /* Comienza a ocultar la imagen */
-                transform: scaleX(0);
-                /* Se desliza hacia afuera */
-            }
-
-            100% {
-                opacity: 0;
-                /* Finaliza oculta */
+                transform: translateY(0);
             }
         }
 
+        /* Form Container */
         .form-container {
             position: relative;
             z-index: 2;
-            /* Asegúrate de que el formulario esté encima del carrusel */
-            border-radius: 16px;
-            /* Bordes un poco más redondeados */
             max-width: 950px;
             width: 100%;
-            /* Ajustar el ancho para más espacio */
             margin: 6rem auto;
-            /* Centrar el formulario */
             padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-container h2 {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1.5rem;
         }
 
         .form-container input,
-        .form-container textarea {
+        .form-container textarea,
+        .form-container select {
             width: 100%;
-            /* Asegurar que ocupen todo el ancho */
             padding: 0.8rem;
-            /* Espaciado interno */
             margin-bottom: 1rem;
-            /* Espaciado entre campos */
             border: 1px solid #bdb9b9;
-            /* Borde claro */
-            border-radius: 6px;
-            /* Bordes redondeados */
-            transition: border 0.3s;
-            /* Transición suave para el borde */
+            border-radius: 8px;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        .form-container input:focus,
+        .form-container textarea:focus,
+        .form-container select:focus {
+            border-color: #4da3ff;
+            box-shadow: 0 0 5px rgba(77, 163, 255, 0.5);
         }
 
         .form-container button {
-            width: 50%;
-            /* Asegurar que el botón ocupe todo el ancho */
+            width: 40%;
             padding: 0.8rem;
-            /* Espaciado interno */
             background-color: #4da3ff;
-            /* Color de fondo del botón */
             color: white;
-            /* Color del texto */
             border: none;
-            /* Sin borde */
-            border-radius: 6px;
-            /* Bordes redondeados */
+            border-radius: 5px;
             cursor: pointer;
-            /* Cambiar el cursor al pasar el mouse */
-            transition: background 0.3s;
-            /* Transición suave para el fondo */
+            transition: background-color 0.4s ease-in-out;
         }
 
         .form-container button:hover {
             background-color: #00b345;
-            /* Color del botón al pasar el mouse */
         }
 
         strong {
             color: #579e72
         }
 
+        /* Navbar */
         .navbar {
             position: fixed;
-            /* Mantener la navbar fija en la parte superior */
             top: 0;
-            /* Asegurar que esté en la parte superior */
             left: 0;
             width: 100%;
-            /* Asegurar que ocupe todo el ancho */
-            z-index: 4;
-            /* Asegurar que esté encima de otros elementos */
-            padding: 10px 20px;
-            /* Espaciado interno */
+            z-index: 1000;
+            padding: 0.5rem 1rem;
+            /* Reducimos el padding */
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            /* Reducimos el tamaño del texto */
+            font-weight: bold;
+            color: #4da3ff !important;
+        }
+
+        .navbar-toggler-icon {
+            width: 1.4rem;
+            /* Reducimos el tamaño del icono */
+            height: 1.4rem;
+        }
+
+        .nav-link {
+            font-size: 0.9rem;
+            /* Reducimos el tamaño del texto */
+            padding: 0.3rem 0.8rem;
+            /* Ajustamos el padding */
         }
     </style>
 </head>
@@ -181,7 +187,7 @@
                         <!-- You can add more links here -->
                     </ul>
 
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ms-auto">
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>

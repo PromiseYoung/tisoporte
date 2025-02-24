@@ -5,12 +5,13 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 @if (session('status'))
-                    <div class="alert alert-success" role="alert">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {!! session('status') !!}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
-                <div class="card border-0 shadow-lg rounded">
+                <div class="card border-0 shadow rounded-3">
                     <div class="card-header bg-success text-white text-center rounded-top">
                         <h5 class="mb-0">Crear Ticket</h5>
                     </div>
@@ -19,10 +20,10 @@
                         <form method="POST" action="{{ route('tickets.store') }}" enctype="multipart/form-data">
                             @csrf
 
-                            <div class="form-group">
-                                <label for="author_name">Nombre del solicitante</label>
+                            <div class="mb-3">
+                                <label for="author_name" class="form-label">Nombre del solicitante</label>
                                 <input id="author_name" type="text"
-                                    class="form-control @error('author_name') is-invalid @enderror rounded-pill"
+                                    class="form-control @error('author_name') is-invalid @enderror rounded-3"
                                     name="author_name" value="{{ old('author_name') }}" required autocomplete="name"
                                     autofocus>
                                 @error('author_name')
@@ -30,10 +31,10 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="author_email">Tu Correo Electrónico</label>
+                            <div class="mb-3">
+                                <label for="author_email" class="form-label">Tu Correo Electrónico</label>
                                 <input id="author_email" type="email"
-                                    class="form-control @error('author_email') is-invalid @enderror rounded-pill"
+                                    class="form-control @error('author_email') is-invalid @enderror rounded-3"
                                     name="author_email" value="{{ old('author_email') }}" required autocomplete="email"
                                     placeholder="ejemplo@load.com.mx">
                                 @error('author_email')
@@ -41,30 +42,29 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="title">@lang('cruds.ticket.fields.title')</label>
+                            <div class="mb-3">
+                                <label for="title" class="form-label">@lang('cruds.ticket.fields.title')</label>
                                 <input id="title" type="text"
-                                    class="form-control @error('title') is-invalid @enderror rounded-pill" name="title"
+                                    class="form-control @error('title') is-invalid @enderror rounded-3" name="title"
                                     value="{{ old('title') }}" required autocomplete="title">
                                 @error('title')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="content">@lang('cruds.ticket.fields.content')</label>
-                                <textarea class="form-control @error('content') is-invalid @enderror rounded" id="content" name="content"
-                                    rows="3" required>{{ old('content') }}</textarea>
+                            <div class="mb-3">
+                                <label for="content" class="form-label">@lang('cruds.ticket.fields.content')</label>
+                                <textarea class="form-control @error('content') is-invalid @enderror rounded-3" id="content" name="content"
+                                    rows="4" required>{{ old('content') }}</textarea>
                                 @error('content')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="category">Categoría</label>
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Categoría</label>
                                 <select id="category" name="category"
-                                    class="form-control select2 @error('category') is-invalid @enderror rounded-pill"
-                                    required>
+                                    class="form-select @error('category') is-invalid @enderror rounded-3" required>
                                     <option selected disabled>Elige la Categoria</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->name }}"
@@ -77,10 +77,10 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="priority">Prioridad</label>
+                            <div class="mb-3">
+                                <label for="priority" class="form-label">Prioridad</label>
                                 <select id="priority" name="priority"
-                                    class="form-control @error('priority') is-invalid @enderror rounded-pill" required>
+                                    class="form-select @error('priority') is-invalid @enderror rounded-3" required>
                                     <option selected disabled>Grado de tu solicitud</option>
                                     @foreach ($priorities as $priority)
                                         <option value="{{ $priority->name }}"
@@ -93,10 +93,10 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="localidad">Localidad</label>
+                            <div class="mb-3">
+                                <label for="localidad" class="form-label">Localidad</label>
                                 <select id="localidad" name="localidad"
-                                    class="form-control @error('localidad') is-invalid @enderror rounded-pill" required>
+                                    class="form-select @error('localidad') is-invalid @enderror rounded-3" required>
                                     <option selected disabled>Ubicacion de Almacen</option>
                                     @foreach ($localidades as $localidad)
                                         <option value="{{ $localidad->nombre }}"
@@ -110,8 +110,9 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
-                                <label for="attachments">{{ trans('cruds.ticket.fields.attachments') }}</label>
+                            <div class="mb-3">
+                                <label for="attachments"
+                                    class="form-label">{{ trans('cruds.ticket.fields.attachments') }}</label>
                                 <div class="needsclick dropzone @error('attachments') is-invalid @enderror"
                                     id="attachments-dropzone"></div>
                                 @error('attachments')
@@ -119,28 +120,30 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group text-center">
-                                <button type="submit" class="btn btn-success rounded-pill">
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success btn-sm rounded-pill px-4">
                                     @lang('global.submit')
                                 </button>
-                                <footer class="text-center mt-5">
-                                    <p>&copy; {{ date('Y') }} Logística y Administración. S.A de C.V</p>
-                                </footer>
                             </div>
                         </form>
+                    </div>
+                    <!-- Footer -->
+                    <div class="card-footer bg-light text-center rounded-bottom py-2 mt-3">
+                        <small>© {{ date('Y') }} <strong>Logística y Administración S.A. de C.V.</strong> Todos los
+                            derechos reservados.</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 @endsection
 @section('scripts')
     <script>
         var uploadedAttachmentsMap = {}
         Dropzone.options.attachmentsDropzone = {
             url: '{{ route('tickets.storeMedia') }}',
-            maxFilesize: 2, // MB
-            maxFilesize: 5,
+            maxFilesize: 3, // MB tamaño de archivo permitido
             acceptedFiles: 'image/*',
             addRemoveLinks: true,
             headers: {
