@@ -11,12 +11,12 @@
                     </div>
                 @endif
 
-                <div class="card border-0 shadow rounded-3">
+                <div class="card border-0  rounded-3">
                     <div class="card-header bg-success text-white text-center rounded-top">
                         <h5 class="mb-0">Crear Ticket</h5>
                     </div>
 
-                    <div class="card-body text-dark p-4">
+                    <div class="card-body bg-light text-dark p-4">
                         <form method="POST" action="{{ route('tickets.store') }}" enctype="multipart/form-data">
                             @csrf
 
@@ -128,7 +128,7 @@
                         </form>
                     </div>
                     <!-- Footer -->
-                    <div class="card-footer bg-light text-center rounded-bottom py-2 mt-3">
+                    <div class="card-footer text-center rounded-bottom py-2 mt-3">
                         <small>© {{ date('Y') }} <strong>Logística y Administración S.A. de C.V.</strong> Todos los
                             derechos reservados.</small>
                     </div>
