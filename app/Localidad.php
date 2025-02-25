@@ -18,7 +18,7 @@ class Localidad extends Model
 
     /**
      * Relación de uno a muchos con el modelo Ticket.
-     * Un localidad puede tener muchos tickets.
+     * Una localidad puede tener muchos tickets.
      */
     public function tickets()
     {

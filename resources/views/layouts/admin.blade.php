@@ -69,8 +69,8 @@
             @endif
             {{-- BOTON DE MOOD DARK-LIGHT --}}
             <li class="nav-item">
-                <button id="theme-toggle" class="btn btn-light">
-                    <i id="theme-icon" class="fa-regular fa-spin-pulse fa-thin fa-sun"></i>
+                <button id="theme-toggle" class="btn btn-light border-0 shadow-sm rounded-circle">
+                    <i id="theme-icon" class="fa-solid fa-sun"></i>
                 </button>
             </li>
         </ul>

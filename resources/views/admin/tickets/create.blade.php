@@ -100,12 +100,12 @@
 
                 <div class="form-group">
                     <label for="localidad_id">Localidad</label>
-                    <select id="localidad_id" name="localidad"
+                    <select id="localidad_id" name="localidad_id"
                         class="form-control form-control-lg select2 @error('localidad_id') is-invalid @enderror rounded-pill"
                         required>
                         @foreach ($localidad as $id => $nombre)
                             <option value="{{ $id }}"
-                                {{ (old('localidad') ?? (isset($ticket) ? $ticket->localidad_id : null)) == $id ? 'selected' : '' }}>
+                                {{ (old('localidad_id') ?? (isset($ticket) ? $ticket->localidad_id : null)) == $id ? 'selected' : '' }}>
                                 {{ $nombre }}
                             </option>
                         @endforeach

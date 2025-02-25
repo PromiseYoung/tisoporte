@@ -120,7 +120,7 @@ class TicketsController extends Controller
 
         $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'),);
+        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $assigned_to_users = User::whereHas('roles', function ($query) {
             $query->whereId(2);
@@ -174,7 +174,7 @@ class TicketsController extends Controller
 
         $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'),);
+        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $assigned_to_users = User::whereHas('roles', function ($query) {
             $query->whereId(2);
@@ -246,11 +246,11 @@ class TicketsController extends Controller
         ]);
         $user = auth()->user();
         $comment = $ticket->comments()->create([
-            'author_name'   => $user->name,
-            'author_email'  => $user->email,
+            'author_name' => $user->name,
+            'author_email' => $user->email,
 
-            'user_id'       => $user->id,
-            'comment_text'  => $request->comment_text
+            'user_id' => $user->id,
+            'comment_text' => $request->comment_text
         ]);
         $ticket->sendCommentNotification($comment);
         return redirect()->back()->withStatus('Comentario enviado al usuario con exito!');

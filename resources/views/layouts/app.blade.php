@@ -235,7 +235,7 @@
             </div>
         </div>
         <main class="py-4">
-            <div class="container form-container">
+            <div class="container shadow-none  form-container">
                 @yield('content')
             </div>
         </main>

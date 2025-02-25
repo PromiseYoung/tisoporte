@@ -19,10 +19,10 @@ class StoreTicketRequest extends FormRequest
     public function rules()
     {
         return [
-            'title'       => [
+            'title' => [
                 'required',
             ],
-            'status_id'   => [
+            'status_id' => [
                 'required',
                 'integer',
             ],
