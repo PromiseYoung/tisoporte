@@ -53,7 +53,7 @@ Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware(['auth'])
         // Rutas de recursos
         Route::resource($name, $controller);
     }
-    
+
     // Rutas de Tickets usando `resource Admin`
     Route::resource('tickets', 'TicketsController');
 

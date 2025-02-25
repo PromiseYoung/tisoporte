@@ -129,8 +129,8 @@ class Ticket extends Model implements HasMedia
                 })
                     // O usuarios asignados a este ticket
                     ->orWhereHas('tickets', function ($q) {
-                        $q->whereId($this->id);
-                    });
+                    $q->whereId($this->id);
+                });
             });
 
         // Incluir administradores si no hay comentarios o asignaciones
