@@ -45,7 +45,7 @@ return [
         'fields' => [
             'id' => 'ID',
             'id_helper' => '',
-            'name' => 'Nombre',
+            'name' => 'Usuario',
             'name_helper' => '',
             'email' => 'Correo',
             'email_helper' => '',
@@ -107,7 +107,7 @@ return [
         'fields' => [
             'id' => 'ID',
             'id_helper' => '',
-            'name' => 'Name',
+            'name' => 'Nombre',
             'name_helper' => '',
             'color' => 'Color',
             'color_helper' => '',

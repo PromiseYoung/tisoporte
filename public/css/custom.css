@@ -151,6 +151,10 @@ body.dark-mode option {
 /* MODO DARK CLASES  */
 body.dark-mode .app-body .card-header,
 body.dark-mode .sidebar,
+body.dark-mode .pastel,
+body.dark-mode .sidebar,
+body.dark-mode .shadow-sm,
+body.dark-mode .row,
 body.dark-mode .nav-item,
 body.dark-mode .dataTables_length,
 body.dark-mode .page-link,
