@@ -29,7 +29,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('admin.roles.index') }}"
                                     class="nav-link {{ request()->is('admin/roles') || request()->is('admin/roles/*') ? 'active' : '' }} text-white">
-                                    <i class="fa-fw fas fa-briefcase nav-icon"></i>
+                                    <i class="fa-fw fas fa-user-cog nav-icon"></i>
                                     {{ trans('cruds.role.title') }}
                                 </a>
                             </li>
@@ -61,7 +61,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.statuses.index') }}"
                         class="nav-link {{ request()->is('admin/statuses') || request()->is('admin/statuses/*') ? 'active' : '' }} text-white">
-                        <i class="fa-fw fas fa-cogs nav-icon"></i>
+                        <i class="fa-fw fas fa-check-circle nav-icon"></i>
                         {{ trans('cruds.status.title') }}
                     </a>
                 </li>
@@ -71,7 +71,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.priorities.index') }}"
                         class="nav-link {{ request()->is('admin/priorities') || request()->is('admin/priorities/*') ? 'active' : '' }} text-white">
-                        <i class="fa-fw fas fa-exclamation-circle nav-icon"></i>
+                        <i class="fa-fw fas fa-flag nav-icon"></i>
                         {{ trans('cruds.priority.title') }}
                     </a>
                 </li>
@@ -81,7 +81,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.categories.index') }}"
                         class="nav-link {{ request()->is('admin/categories') || request()->is('admin/categories/*') ? 'active' : '' }} text-white">
-                        <i class="fa-fw fas fa-tags nav-icon"></i>
+                        <i class="fa-fw fas fa-folder nav-icon"></i>
                         {{ trans('cruds.category.title') }}
                     </a>
                 </li>
@@ -91,7 +91,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.tickets.index') }}"
                         class="nav-link {{ request()->is('admin/tickets') || request()->is('admin/tickets/*') ? 'active' : '' }} text-white">
-                        <i class="fa-fw fas fa-question-circle nav-icon"></i>
+                        <i class="fa-fw fas fa-ticket-alt nav-icon"></i>
                         {{ trans('cruds.ticket.title') }}
                     </a>
                 </li>
