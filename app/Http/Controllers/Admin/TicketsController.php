@@ -123,7 +123,7 @@ class TicketsController extends Controller
         $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $assigned_to_users = User::whereHas('roles', function ($query) {
-            $query->whereId(2);
+            $query->whereIn('id', [1, 2]);
         })
             ->orWhere('id', auth()->user()->id)
             ->pluck('name', 'id')
@@ -143,7 +143,7 @@ class TicketsController extends Controller
 
             // Subir los archivos adjuntos
             foreach ($request->input('attachments', []) as $file) {
-                $ticket->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('attachments');
+                $ticket->addMedia(storage_path('app/tmp/uploads/' . $file))->toMediaCollection('attachments');
             }
 
             // Confirmar la transacción si todo ha ido bien
@@ -177,7 +177,7 @@ class TicketsController extends Controller
         $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $assigned_to_users = User::whereHas('roles', function ($query) {
-            $query->whereId(2);
+            $query->whereIn('id', [1, 2]);
         })
             ->orWhere('id', auth()->user()->id)
             ->pluck('name', 'id')
@@ -203,7 +203,7 @@ class TicketsController extends Controller
         $media = $ticket->attachments->pluck('file_name')->toArray();
         foreach ($request->input('attachments', []) as $file) {
             if (count($media) === 0 || !in_array($file, $media)) {
-                $ticket->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('attachments');
+                $ticket->addMedia(storage_path('app/tmp/uploads/' . $file))->toMediaCollection('attachments');
             }
         }
 

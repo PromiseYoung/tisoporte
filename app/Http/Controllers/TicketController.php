@@ -81,7 +81,7 @@ class TicketController extends Controller
 
             // Subir archivos adjuntos (si existen)
             foreach ($request->input('attachments', []) as $file) {
-                $ticket->addMedia(storage_path('tmp/uploads/' . $file))->toMediaCollection('attachments');
+                $ticket->addMedia(storage_path('app/tmp/uploads/' . $file))->toMediaCollection('attachments');
             }
 
             DB::commit(); // Si todo va bien, confirma la transacción
