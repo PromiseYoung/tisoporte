@@ -21,7 +21,7 @@ class AuditLog extends Model
         'properties' => 'collection',
     ];
 
-    public function user_name()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
