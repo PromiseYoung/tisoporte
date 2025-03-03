@@ -36,26 +36,6 @@
                     </div>
                 @endforeach
             </div>
-
-            <!-- FILTRO DE FECHAS -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <form method="GET" action="{{ route('admin.home') }}" class="row g-3">
-                        <div class="col-md-4">
-                            <input type="date" name="start_date" class="form-control" placeholder="Fecha Inicial"
-                                value="{{ request('start_date') }}" required>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="date" name="end_date" class="form-control" placeholder="Fecha Final"
-                                value="{{ request('end_date') }}" required>
-                        </div>
-                        <div class="col-md-4 d-grid">
-                            <button type="submit" class="btn btn-success">Filtrar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <!-- GRÁFICO DE PIE -->
             <div class="row mb-4">
                 <div class="col-12">
@@ -76,6 +56,34 @@
                     <div class="card shadow-sm rounded">
                         <div class="card-header text-center">
                             <h5>Total de Soportes Realizados por Analista</h5>
+                            <form method="GET" action="{{ route('admin.home') }}" class="form-inline">
+                                <div class="form-group mr-2">
+                                    <label for="analyst_id" class="mr-2">Filtrar por Analista:</label>
+                                    <select name="analyst_id" id="analyst_id" class="form-control">
+                                        <option value="">Seleccione un Analista</option>
+                                        @foreach ($analystsList as $analyst)
+                                            <option value="{{ $analyst->id }}"
+                                                {{ request('analyst_id') == $analyst->id ? 'selected' : '' }}>
+                                                {{ $analyst->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="form-group mr-2">
+                                    <label for="start_date" class="mr-2">Fecha de Inicio:</label>
+                                    <input type="date" name="start_date" class="form-control"
+                                        value="{{ request('start_date', $startDate) }}">
+                                </div>
+
+                                <div class="form-group mr-2">
+                                    <label for="end_date" class="mr-2">Fecha de Fin:</label>
+                                    <input type="date" name="end_date" class="form-control"
+                                        value="{{ request('end_date', $endDate) }}">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Filtrar</button>
+                            </form>
                         </div>
                         <div class="card-body">
                             <table class="table table-striped table-bordered">
@@ -95,11 +103,19 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot class="table-success">
+                                    <tr>
+                                        <th colspan="2" class="text-right">Total de Soportes:</th>
+                                        <th class="text-center">
+                                            {{ array_sum(array_column($categoriesByAnalyst, 'count')) }} Soportes</th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+
 
             <!-- GRÁFICO DE GAUGE -->
             <div class="row mb-4">
@@ -114,7 +130,18 @@
                     </div>
                 </div>
             </div>
-
+            <div class="row mb-4">
+                <div class="col-12 col-md-8 mx-auto">
+                    <div class="card shadow-lg rounded">
+                        <div class="card-header text-center">
+                            <h5 class="font-weight-bold">Gráfico Lineal - Soportes por Mes</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -129,13 +156,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
+
             // === CONFIGURACIÓN GENERAL ===
-            Chart.defaults.font.size = 14;
-            Chart.defaults.font.family = "'Roboto', sans-serif";
-            Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-            Chart.defaults.plugins.tooltip.titleColor = '#fff';
-            Chart.defaults.plugins.tooltip.bodyColor = '#fff';
-            Chart.defaults.plugins.legend.labels.color = '#444';
+            Chart.defaults.font = {
+                size: 16,
+                family: "'Poppins', 'Roboto', sans-serif",
+                weight: '500',
+                lineHeight: 1.4
+            };
+            Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(255, 255, 255, 0.9)'; // Blanco suave
+            Chart.defaults.plugins.tooltip.titleColor = '#546e7a'; // Gris azulado
+            Chart.defaults.plugins.tooltip.bodyColor = '#455a64'; // Azul grisáceo
+            Chart.defaults.plugins.legend.labels.color = '#78909c'; // Gris pastel
 
             // === DATOS DINÁMICOS DESDE BACKEND ===
             var labels = {!! json_encode($categories) !!};
@@ -177,36 +209,42 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
+                                    if (!context.dataIndex) return '';
                                     var index = context.dataIndex;
-                                    var label = context.label;
-                                    var value = context.raw;
-                                    var percentage = percentages[index];
-                                    var analyst = analysts[index];
-                                    return `${label}: ${percentage}% (${value} tickets) | Analista: ${analyst}`;
+                                    var label = context.label || '';
+                                    var value = context.raw || 0;
+                                    var percentage = percentages[index] || 0;
+                                    var analyst = analysts[index] || 'Desconocido';
+                                    return `${label}: ${percentage}% (${value} tickets) | Analista TI: ${analyst}`;
                                 }
                             }
                         },
                         datalabels: {
-                            color: '#fff',
+                            color: '#fff', // Color del texto
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Fondo semi-transparente para mejor contraste
+                            borderRadius: 6, // Bordes redondeados
+                            padding: 8, // Espacio alrededor del texto
+                            align: 'end', // Alinear las etiquetas al final de la barra/punto
+                            anchor: 'end', // Fijar la etiqueta en la punta del elemento
                             font: {
                                 weight: 'bold',
-                                size: 14
+                                size: 14,
+                                family: "'Poppins', sans-serif" // Tipografía más moderna y profesional
                             },
                             formatter: function(value, context) {
                                 var percentage = percentages[context.dataIndex];
-                                return percentage + '%';
+                                return percentage + '% (' + value + ')'; // Mostrar % y valor real
                             }
                         }
                     },
                     animation: {
                         animateRotate: true,
                         animateScale: true,
-                        duration: 1500,
-                        easing: 'easeOutBounce'
+                        duration: 1200,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
-
             // === GRÁFICO GAUGE PARA TICKETS CERRADOS ===
             var ctxGauge = document.getElementById('gaugeChart').getContext('2d');
             new Chart(ctxGauge, {
@@ -214,30 +252,62 @@
                 data: {
                     labels: ['Cerrados', 'Pendientes'],
                     datasets: [{
-                        data: [{{ $closedPercentage }}, 100 - {{ $closedPercentage }}],
+                        data: [{{ $closedPercentage ?? 0 }}, 100 - {{ $closedPercentage ?? 0 }}],
                         backgroundColor: ['#36b9cc', '#e74a3b'],
-                        borderWidth: 1
+                        borderWidth: 3, // Aumentar el grosor del borde
+                        borderColor: '#fff', // Color de borde blanco para mejorar el contraste
                     }]
                 },
                 options: {
-                    rotation: Math.PI,
-                    circumference: Math.PI,
+                    rotation: Math.PI, // Para mostrar la gráfica a la mitad de la circunferencia
+                    circumference: Math.PI, // Mostrar solo la mitad
                     responsive: true,
                     maintainAspectRatio: false,
+                    cutout: '70%', // Dejar un centro vacío más grande para mostrar el porcentaje
                     plugins: {
                         legend: {
                             display: true,
                             position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14, // Aumentar el tamaño de la fuente en la leyenda
+                                    weight: 'bold' // Hacer la fuente en negrita
+                                },
+                                padding: 20
+                            }
                         },
                         tooltip: {
-                            enabled: false
+                            enabled: false // Desactivar el tooltip por defecto
+                        }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        duration: 1000, // Duración de la animación
+                        easing: 'easeOutQuart' // Efecto de suavizado
+                    },
+                    // Usar el método afterDatasetsDraw para dibujar texto
+                    plugins: {
+                        afterDatasetsDraw: function(chart) {
+                            var ctx = chart.ctx;
+                            var centerX = chart.chartArea.left + (chart.chartArea.right - chart
+                                .chartArea.left) / 2;
+                            var centerY = chart.chartArea.top + (chart.chartArea.bottom - chart
+                                .chartArea.top) / 2;
+
+                            ctx.save();
+                            ctx.font = 'bold 20px Arial';
+                            ctx.fillStyle = '#333';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText('{{ $closedPercentage ?? 0 }}%', centerX, centerY);
+                            ctx.restore();
                         }
                     }
                 }
             });
-
             // === FUNCIÓN PARA AJUSTAR EL BRILLO DE LOS COLORES ===
             function shadeColor(color, percent) {
+                if (!/^#[0-9A-F]{6}$/i.test(color)) return color; // Si no es un color válido, devolver sin cambios
                 var f = parseInt(color.slice(1), 16),
                     t = percent < 0 ? 0 : 255,
                     p = percent < 0 ? percent * -1 : percent,
@@ -251,6 +321,115 @@
                     (Math.round((t - B) * p) + B)
                 ).toString(16).slice(1);
             }
+
+            var ctxLine = document.getElementById('lineChart').getContext('2d');
+
+            // Datos de meses
+            var months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre',
+                'Octubre', 'Noviembre', 'Diciembre'
+            ];
+
+            // Datos dinámicos desde el backend
+            var analystsData = {!! json_encode($analystsData) !!};
+
+            // Paleta de colores mejorada
+            var lineColors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6c757d'];
+
+            // Crear los datasets para cada analista
+            var datasets = analystsData.map((analyst, index) => {
+                return {
+                    label: analyst.name,
+                    data: analyst.data,
+                    borderColor: lineColors[index % lineColors.length],
+                    backgroundColor: lineColors[index % lineColors.length] +
+                        '33', // Color con transparencia
+                    borderWidth: 3,
+                    borderCapStyle: 'round', // Añadir un borde redondeado a las líneas
+                    tension: 0.6, // Suaviza las líneas
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: true,
+                    cubicInterpolationMode: 'monotone', // Mejora la suavidad en las curvas
+                };
+            });
+
+            // Configurar el gráfico de líneas
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#333',
+                                padding: 20,
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderWidth: 1,
+                            borderColor: '#333',
+                            padding: 10,
+                            cornerRadius: 4,
+                            displayColors: false // Desactivar los colores de los cuadros en el tooltip
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cantidad de Soportes',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            ticks: {
+                                stepSize: 5,
+                                color: '#444',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Meses',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            ticks: {
+                                color: '#444',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
         });
     </script>
 @endsection
