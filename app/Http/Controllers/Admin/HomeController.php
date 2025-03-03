@@ -6,11 +6,15 @@ use Carbon\Carbon;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
 use App\Ticket;
+use App\User;
 use Illuminate\Http\Request;
 use DB;
 
 class HomeController
 {
+    /**
+     * Muestra la vista principal del Dashboard.
+     */
     public function index(Request $request)
     {
         // Verificar permisos
@@ -26,9 +30,9 @@ class HomeController
         $pieAndTableData = $this->getPieAndTableData($request);
 
         // KPI de porcentaje de tickets cerrados
-        $closedPercentage = ($kpis['totalTickets'] > 0)
-            ? ($kpis['closedTickets'] / $kpis['totalTickets']) * 100
-            : 0;
+        $closedPercentage = $this->calculateClosedPercentage($kpis);
+
+        $analystsList = User::whereHas('tickets')->get();
 
         // Pasar los datos a la vista
         return view('home', [
@@ -41,6 +45,7 @@ class HomeController
             'analysts' => $pieAndTableData['analysts'],
             'categoriesByAnalyst' => $pieAndTableData['categoriesByAnalyst'],
             'analystsData' => $analystsData,
+            'analystsList' => $analystsList,
             'startDate' => $pieAndTableData['startDate'],
             'endDate' => $pieAndTableData['endDate']
         ]);
@@ -51,89 +56,114 @@ class HomeController
      */
     private function getKPIs()
     {
-        $totalTickets = Ticket::count();
-        $openTickets = Ticket::whereHas('status', function ($query) {
-            $query->whereName('ABIERTO');
-        })->count();
-        $closedTickets = Ticket::whereHas('status', function ($query) {
-            $query->whereName('CERRADO');
-        })->count();
-
         return [
-            'totalTickets' => $totalTickets,
-            'openTickets' => $openTickets,
-            'closedTickets' => $closedTickets,
+            'totalTickets' => Ticket::count(),
+            'openTickets' => $this->getTicketsByStatus('ABIERTO'),
+            'closedTickets' => $this->getTicketsByStatus('CERRADO'),
         ];
     }
 
+    /**
+     * Obtener tickets por estado
+     */
+    private function getTicketsByStatus($status)
+    {
+        return Ticket::whereHas('status', fn($query) => $query->where('name', $status))->exists()
+            ? Ticket::whereHas('status', fn($query) => $query->where('name', $status))->count()
+            : 0;
+    }
+
+    /**
+     * Calcular el porcentaje de tickets cerrados
+     */
+    private function calculateClosedPercentage($kpis)
+    {
+        return ($kpis['totalTickets'] > 0)
+            ? round(($kpis['closedTickets'] / $kpis['totalTickets']) * 100, 1)
+            : 0;
+    }
     /**
      * Obtener datos para la gráfica de líneas (Soportes por Mes y Analista)
      */
     private function getLineChartData()
     {
-        $admins = \App\User::whereHas('roles', function ($query) {
-            $query->where('title', 'Analista TI','ADMIN');
-        })->get();
+        $admins = User::whereHas('roles', fn($query) => $query->whereIn('title', ['Analista TI', 'ADMIN']))->get();
 
         $analystsData = [];
-
         foreach ($admins as $analyst) {
-            $dataLine = [];
-
-            // Recorrer cada mes del año actual
-            for ($month = 1; $month <= 12; $month++) {
-                $startOfMonth = Carbon::now()->startOfYear()->addMonths($month - 1)->startOfMonth();
-                $endOfMonth = Carbon::now()->startOfYear()->addMonths($month - 1)->endOfMonth();
-
-                // Contar los tickets asignados al analista en ese mes
-                $monthlyTickets = Ticket::where('assigned_to_user_id', $analyst->id)
-                    ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
-                    ->count();
-
-                $dataLine[] = $monthlyTickets;
-            }
-
             $analystsData[] = [
                 'name' => $analyst->name,
-                'data' => $dataLine,
+                'data' => $this->getMonthlyTicketsData($analyst->id),
             ];
         }
-
         return $analystsData;
     }
+    /**
+     * Obtener los tickets mensuales asignados a un analista
+     */
+    private function getMonthlyTicketsData($analystId)
+    {
+        // Optimización: Consultar todos los meses en una sola consulta
+        $monthlyTickets = Ticket::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as count')
+        )
+            ->where('assigned_to_user_id', $analystId)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->groupBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Rellenar con ceros los meses sin datos
+        return array_map(fn($m) => $monthlyTickets[$m] ?? 0, range(1, 12));
+    }
+
 
     /**
      * Obtener datos para la gráfica de pie y tabla (Tickets por Categoría y Analista)
      */
     private function getPieAndTableData(Request $request)
     {
-        // Filtro de fechas
+        // Filtros
         $startDate = $request->input('start_date') ?: Carbon::now()->startOfYear()->toDateString();
         $endDate = $request->input('end_date') ?: Carbon::now()->endOfYear()->toDateString();
+        $analystId = $request->input('analyst_id');
 
-        // Consultar tickets por categoría y analista
-        $ticketData = Ticket::select('category_id', 'assigned_to_user_id', DB::raw('COUNT(*) as total'))
+        // Obtener tickets filtrados
+        $ticketData = $this->getTicketsData($startDate, $endDate, $analystId);
+
+        // Formatear datos para Chart.js y la tabla
+        return $this->formatPieAndTableData($ticketData, $startDate, $endDate);
+    }
+
+    /**
+     * Consultar los tickets por fecha y analista
+     */
+    private function getTicketsData($startDate, $endDate, $analystId)
+    {
+        return Ticket::select('category_id', 'assigned_to_user_id', DB::raw('COUNT(*) as total'))
             ->with(['category', 'assigned_to_user'])
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->when($analystId, fn($query) => $query->where('assigned_to_user_id', $analystId))
             ->groupBy('category_id', 'assigned_to_user_id')
             ->get();
+    }
 
-        // Formatear datos para Chart.js
+    /**
+     * Formatear datos para la gráfica de pie y la tabla
+     */
+    private function formatPieAndTableData($ticketData, $startDate, $endDate)
+    {
         $categories = [];
         $data = [];
         $analysts = [];
         $categoriesByAnalyst = [];
 
         foreach ($ticketData as $ticket) {
-            // Para la gráfica de pie, recolectamos categorías y sus totales
-            if (!in_array($ticket->category->name, $categories)) {
-                $categories[] = $ticket->category->name;
-            }
-
+            $categories[$ticket->category->name] = ($categories[$ticket->category->name] ?? 0) + $ticket->total;
             $data[] = $ticket->total;
-            $analysts[] = $ticket->assigned_to_user->name ?? 'Sin Asignar';
+            $analysts[$ticket->assigned_to_user->name ?? 'Sin Asignar'] = ($analysts[$ticket->assigned_to_user->name ?? 'Sin Asignar'] ?? 0) + $ticket->total;
 
-            // Agrupamos por analista y categoría para la tabla
             $categoriesByAnalyst[] = [
                 'analyst' => $ticket->assigned_to_user->name ?? 'Sin Asignar',
                 'category' => $ticket->category->name,
@@ -142,12 +172,29 @@ class HomeController
         }
 
         return [
-            'categories' => $categories,
-            'data' => $data,
-            'analysts' => $analysts,
+            'categories' => array_keys($categories),
+            'data' => array_values($categories),
+            'analysts' => array_keys($analysts),
             'categoriesByAnalyst' => $categoriesByAnalyst,
             'startDate' => $startDate,
             'endDate' => $endDate,
         ];
+    }
+
+    /**
+     * Mostrar el listado de analistas
+     */
+    public function showPieAndTableData(Request $request)
+    {
+        $analystsList = User::whereHas('tickets')->get();
+
+        $data = $this->getPieAndTableData($request);
+
+        return view('home', [
+            'categoriesByAnalyst' => $data['categoriesByAnalyst'],
+            'analystsList' => $analystsList,
+            'startDate' => $data['startDate'],
+            'endDate' => $data['endDate'],
+        ]);
     }
 }
