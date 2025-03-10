@@ -79,6 +79,7 @@ class HomeController
     private function calculateClosedPercentage($kpis)
     {
         return ($kpis['totalTickets'] > 0)
+
             ? round(($kpis['closedTickets'] / $kpis['totalTickets']) * 100, 1)
             : 0;
     }
