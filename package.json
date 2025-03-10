@@ -26,5 +26,8 @@
         "vue-template-compiler": "^0.1.0",
         "webpack": "^5.94.0",
         "webpack-cli": "^5.1.4"
+    },
+    "dependencies": {
+        "chartjs-plugin-datalabels": "^2.2.0"
     }
 }
