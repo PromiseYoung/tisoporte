@@ -47,7 +47,20 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 2s ease-in-out;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(1.05);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         @keyframes fadeInUp {
@@ -227,10 +240,10 @@
                     <img src="{{ asset('img/almacen.jpg') }}" class="d-block w-100" alt="Imagen 1">
                 </div>
                 <div class="carousel-item">
-                    <img src="{{ asset('img/raks.jpg') }}" class="d-block w-100" alt="Imagen 2">
+                    <img src="{{ asset('img/load.jpg') }}" class="d-block w-100" alt="Imagen 2">
                 </div>
                 <div class="carousel-item">
-                    <img src="{{ asset('img/load.jpg') }}" class="d-block w-100" alt="Imagen 2">
+                    <img src="{{ asset('img/otrorak.png') }}" class="d-block w-100" alt="Imagen 2">
                 </div>
             </div>
         </div>
