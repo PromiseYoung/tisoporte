@@ -145,9 +145,9 @@
 
                 @if (auth()->user()->isAdmin())
                     <div class="form-group {{ $errors->has('assigned_to_user_id') ? 'has-error' : '' }}">
-                        <label for="assigned_to_user">{{ trans('cruds.ticket.fields.assigned_to_user') }}</label>
+                        <label for="assigned_to_user">{{ trans('cruds.ticket.fields.assigned_to_user') }}*</label>
                         <select name="assigned_to_user_id" id="assigned_to_user"
-                            class="form-control form-control-lg select2">
+                            class="form-control form-control-lg select2" required>
                             @foreach ($assigned_to_users as $id => $assigned_to_user)
                                 <option value="{{ $id }}"
                                     {{ (isset($ticket) && $ticket->assigned_to_user ? $ticket->assigned_to_user->id : old('assigned_to_user_id')) == $id ? 'selected' : '' }}>
