@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Category;
+use App\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyCategoryRequest;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use Gate;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CategoriesController extends Controller
@@ -26,12 +26,19 @@ class CategoriesController extends Controller
     {
         abort_if(Gate::denies('category_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.categories.create');
+        $users = User::all();
+
+        return view('admin.categories.create', compact('users'));
     }
 
     public function store(StoreCategoryRequest $request)
     {
         $category = Category::create($request->all());
+
+        if ($request->has('user_id')) {
+            $category->user_id = $request->input('user_id');
+            $category->save();
+        }
 
         return redirect()->route('admin.categories.index');
     }
@@ -40,12 +47,19 @@ class CategoriesController extends Controller
     {
         abort_if(Gate::denies('category_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.categories.edit', compact('category'));
+        $users = User::all();
+
+        return view('admin.categories.edit', compact('category', 'users'));
     }
 
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $category->update($request->all());
+
+        if ($request->has('user_id')) {
+            $category->user_id = $request->input('user_id');
+            $category->save();
+        }
 
         return redirect()->route('admin.categories.index');
     }

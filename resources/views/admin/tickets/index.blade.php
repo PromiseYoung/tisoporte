@@ -54,8 +54,6 @@
                     </tr>
                 </thead>
             </table>
-
-
         </div>
     </div>
 @endsection
@@ -138,8 +136,8 @@
             let searchParams = new URLSearchParams(window.location.search);
             let dtOverrideGlobals = {
                 buttons: dtButtons,
-                processing: true,
                 serverSide: true,
+                processing: true,
                 retrieve: true,
                 aaSorting: [],
                 ajax: {
@@ -214,6 +212,9 @@
                 pageLength: 100,
                 initComplete: function(settings, json) {
                     $(".dataTables_filter").after(filters);
+                },
+                language: {
+                    processing: '<div class="spinner-container"><div class="spinner"></div><p style="margin-top: 20px;">Cargando datos...</p></div>'
                 }
             };
 

@@ -36,6 +36,24 @@
                         {{ trans('cruds.category.fields.color_helper') }}
                     </small>
                 </div>
+                <div class="form-group {{ $errors->has('user_id') ? 'has-error' : '' }}">
+                    <label for="user_id">{{ trans('cruds.category.fields.user') }}</label>
+                    <select name="user_id" id="user_id" class="form-control select2" required>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                {{ $user->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @if ($errors->has('user_id'))
+                        <div class="invalid-feedback d-block">
+                            {{ $errors->first('user_id') }}
+                        </div>
+                    @endif
+                    <small class="form-text text-muted">
+                        {{ trans('cruds.category.fields.user_helper') }}
+                    </small>
+                </div>
 
                 <div class="form-group">
                     <button class="btn btn-primary" type="submit">

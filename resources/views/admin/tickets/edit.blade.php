@@ -18,7 +18,7 @@
                         value="{{ old('title', isset($ticket) ? $ticket->title : '') }}" required>
                     @error('title')
                         <div class="invalid-feedback">
-                            {{ $message }}
+                            {{ $errors->first('assigned_to_user_id') }}
                         </div>
                     @enderror
                     <small class="form-text text-muted">
@@ -31,7 +31,7 @@
                     <textarea id="content" name="content" class="form-control @error('content') is-invalid @enderror">{{ old('content', isset($ticket) ? $ticket->content : '') }}</textarea>
                     @error('content')
                         <div class="invalid-feedback">
-                            {{ $message }}
+                            {{ $errors->first('assigned_to_user_id') }}
                         </div>
                     @enderror
                     <small class="form-text text-muted">

@@ -27,6 +27,9 @@
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
+    <style>
+
+    </style>
     @yield('styles')
 </head>
 
@@ -103,29 +106,28 @@
         </form>
 
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://unpkg.com/@coreui/coreui@2.1.16/dist/js/coreui.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.flash.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.print.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.colVis.min.js"></script>
-    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
-    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/classic/ckeditor.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.flash.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
     </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
     <script src="{{ asset('js/main.js') }}"></script>
 
     <script>
@@ -152,14 +154,16 @@
                     url: languages['{{ app()->getLocale() }}']
                 },
                 columnDefs: [{
-                    orderable: false,
-                    className: 'select-checkbox',
-                    targets: 0
-                }, {
-                    orderable: false,
-                    searchable: false,
-                    targets: -1
-                }],
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 0
+                    },
+                    {
+                        orderable: false,
+                        searchable: false,
+                        targets: -1
+                    }
+                ],
                 select: {
                     style: 'multi+shift',
                     selector: 'td:first-child'
@@ -173,9 +177,6 @@
                         className: 'btn btn-primary',
                         text: '<i class="fas fa-copy"></i> ' + copyButtonTrans,
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
                         }
                     },
@@ -184,9 +185,6 @@
                         className: 'btn btn-success',
                         text: '<i class="fas fa-file-csv"></i> ' + csvButtonTrans,
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
                         }
                     },
@@ -195,9 +193,6 @@
                         className: 'btn btn-success',
                         text: '<i class="fas fa-file-excel"></i> ' + excelButtonTrans,
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
                         }
                     },
@@ -205,6 +200,10 @@
                         extend: 'pdf',
                         className: 'btn btn-danger',
                         text: '<i class="fas fa-file-pdf"></i> ' + pdfButtonTrans,
+                        download: 'open',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        title: 'Logistica y Administracion',
                         exportOptions: {
                             modifier: {
                                 selected: true
@@ -224,13 +223,10 @@
                                 .prepend(
                                     '<h1 style="text-align:center;">Logistica y Administracion</h1>'
                                 )
-                                .prepend(
-                                    '<br><br>' +
-                                    '<img src="' + logo +
+                                .prepend('<br><br><img src="' + logo +
                                     '" style="position:absolute; top:20px; left:14px; width:110px;"/>'
                                 );
 
-                            // Estilo para tablas
                             $(win.document.body).find('table').css({
                                 'border-collapse': 'collapse',
                                 'width': '100%'
@@ -240,20 +236,13 @@
                             });
                         },
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
                         }
                     },
-
                     {
                         extend: 'colvis',
                         className: 'btn btn-secondary',
-                        text: '<i class="fas fa-columns"></i> ' + colvisButtonTrans,
-                        exportOptions: {
-                            columns: ':visible'
-                        }
+                        text: '<i class="fas fa-columns"></i> ' + colvisButtonTrans
                     }
                 ]
             });

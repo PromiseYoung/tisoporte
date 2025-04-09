@@ -97,6 +97,7 @@
                         name: '{{ trans('global.actions') }}'
                     }
                 ],
+               
                 order: [
                     [1, 'desc']
                 ],

@@ -111,6 +111,8 @@ return [
             'name_helper' => '',
             'color' => 'Color',
             'color_helper' => '',
+            'user' => 'Asignar a Analista TI',
+            'user_helper' => '',
             'created_at' => 'Creado en',
             'created_at_helper' => '',
             'updated_at' => 'Actualizado en',
