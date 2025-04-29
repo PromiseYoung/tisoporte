@@ -12,6 +12,13 @@ class CommentEmailNotification extends Notification
     use Queueable;
 
     /**
+     * The comment instance.
+     *
+     * @var object
+     */
+    protected $comment;
+
+    /**
      * Create a new notification instance.
      *
      * @return void

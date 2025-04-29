@@ -104,6 +104,7 @@
                         name: '<?php echo e(trans('global.actions')); ?>'
                     }
                 ],
+               
                 order: [
                     [1, 'desc']
                 ],

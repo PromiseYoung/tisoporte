@@ -172,9 +172,9 @@ unset($__errorArgs, $__bag); ?>
 
                 <?php if(auth()->user()->isAdmin()): ?>
                     <div class="form-group <?php echo e($errors->has('assigned_to_user_id') ? 'has-error' : ''); ?>">
-                        <label for="assigned_to_user"><?php echo e(trans('cruds.ticket.fields.assigned_to_user')); ?></label>
+                        <label for="assigned_to_user"><?php echo e(trans('cruds.ticket.fields.assigned_to_user')); ?>*</label>
                         <select name="assigned_to_user_id" id="assigned_to_user"
-                            class="form-control form-control-lg select2">
+                            class="form-control form-control-lg select2" required>
                             <?php $__currentLoopData = $assigned_to_users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $assigned_to_user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <option value="<?php echo e($id); ?>"
                                     <?php echo e((isset($ticket) && $ticket->assigned_to_user ? $ticket->assigned_to_user->id : old('assigned_to_user_id')) == $id ? 'selected' : ''); ?>>

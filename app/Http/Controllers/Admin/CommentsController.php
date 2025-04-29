@@ -10,7 +10,6 @@ use App\Http\Requests\UpdateCommentRequest;
 use App\Ticket;
 use App\User;
 use Gate;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CommentsController extends Controller

@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html>
+<script>
+    // Aplica inmediatamente la clase de tema sin esperar al DOM
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.documentElement.classList.add('dark'); // Opcional si usas Tailwind
+    }
+</script>
 
 <head>
     <meta charset="UTF-8">
@@ -10,7 +18,7 @@
 
     <title><?php echo e(trans('panel.site_title')); ?></title>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/css/bootstrap.min.css">
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
@@ -26,7 +34,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" rel="stylesheet" />
     <link href="<?php echo e(asset('css/custom.css')); ?>" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
     <?php echo $__env->yieldContent('styles'); ?>
 </head>
 
@@ -106,29 +113,28 @@
         </form>
 
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://unpkg.com/@coreui/coreui@2.1.16/dist/js/coreui.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.flash.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.print.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.2.4/js/buttons.colVis.min.js"></script>
-    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
-    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/11.0.1/classic/ckeditor.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.flash.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
     </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
     <script src="<?php echo e(asset('js/main.js')); ?>"></script>
 
     <script>
@@ -155,14 +161,16 @@
                     url: languages['<?php echo e(app()->getLocale()); ?>']
                 },
                 columnDefs: [{
-                    orderable: false,
-                    className: 'select-checkbox',
-                    targets: 0
-                }, {
-                    orderable: false,
-                    searchable: false,
-                    targets: -1
-                }],
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 0
+                    },
+                    {
+                        orderable: false,
+                        searchable: false,
+                        targets: -1
+                    }
+                ],
                 select: {
                     style: 'multi+shift',
                     selector: 'td:first-child'
@@ -176,9 +184,6 @@
                         className: 'btn btn-primary',
                         text: '<i class="fas fa-copy"></i> ' + copyButtonTrans,
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
                         }
                     },
@@ -187,10 +192,13 @@
                         className: 'btn btn-success',
                         text: '<i class="fas fa-file-csv"></i> ' + csvButtonTrans,
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
+                        },
+                        customize: function(csv) {
+                            const title = 'Logistica y Administracion';
+                            const header = `"${title}"\n\n`;
+                            csv = header + csv;
+                            return csv;
                         }
                     },
                     {
@@ -198,23 +206,97 @@
                         className: 'btn btn-success',
                         text: '<i class="fas fa-file-excel"></i> ' + excelButtonTrans,
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
+                        },
+                        customize: function(xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            var logo =
+                                'data:image/png;base64,<?php echo e(base64_encode(file_get_contents(public_path('logo/load.png')))); ?>';
+
+                            // Add logo at the top
+                            var rows = sheet.getElementsByTagName('row');
+                            var newRow = sheet.createElement('row');
+                            newRow.setAttribute('r', 1);
+                            var newCell = sheet.createElement('c');
+                            newCell.setAttribute('t', 'inlineStr');
+                            newCell.setAttribute('r', 'A1');
+                            var is = sheet.createElement('is');
+                            var t = sheet.createElement('t');
+                            t.textContent = 'Logistica y Administracion';
+                            is.appendChild(t);
+                            newCell.appendChild(is);
+                            newRow.appendChild(newCell);
+                            sheet.getElementsByTagName('sheetData')[0].insertBefore(newRow, rows[
+                            0]);
+
+                            // Style cells
+                            $('row c[r]', sheet).attr('s',
+                            '42'); // Apply a style index for better formatting
                         }
                     },
                     {
                         extend: 'pdf',
                         className: 'btn btn-danger',
                         text: '<i class="fas fa-file-pdf"></i> ' + pdfButtonTrans,
+                        download: 'open',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        title: 'Logistica y Administracion',
+                        customize: function(doc) {
+                            doc.content.splice(0, 0, {
+                                alignment: 'center',
+                                margin: [0, 0, 0, 20],
+                                image: 'data:image/png;base64,<?php echo e(base64_encode(file_get_contents(public_path('logo/load.png')))); ?>',
+                                width: 120
+                            });
+                            doc.styles.tableHeader = {
+                                fillColor: '#f2f2f2',
+                                color: '#333',
+                                alignment: 'center',
+                                bold: true,
+                                fontSize: 10
+                            };
+                            doc.styles.tableBodyEven = {
+                                fillColor: '#f9f9f9'
+                            };
+                            doc.styles.tableBodyOdd = {
+                                fillColor: '#ffffff'
+                            };
+                            doc.styles.title = {
+                                alignment: 'center',
+                                fontSize: 14,
+                                bold: true,
+                                margin: [0, 0, 0, 10]
+                            };
+                            doc.styles.defaultStyle = {
+                                fontSize: 9,
+                                alignment: 'center'
+                            };
+                        },
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
+                        },
+                        customize: function(doc) {
+                            doc.styles.tableHeader = {
+                                alignment: 'center',
+                                bold: true,
+                                fontSize: 10,
+                                color: '#333',
+                                fillColor: '#f2f2f2'
+                            };
+                            doc.styles.tableBodyEven = {
+                                alignment: 'center',
+                                fillColor: '#f9f9f9'
+                            };
+                            doc.styles.tableBodyOdd = {
+                                alignment: 'center',
+                                fillColor: '#ffffff'
+                            };
+                            doc.styles.defaultStyle = {
+                                alignment: 'center',
+                                fontSize: 9
+                            };
                         }
-
                     },
                     {
                         extend: 'print',
@@ -223,40 +305,45 @@
                         title: '',
                         customize: function(win) {
                             $(win.document.body)
-                                .css('font-size', '10pt')
+                                .css({
+                                    'font-family': 'Arial, sans-serif',
+                                    'font-size': '10pt',
+                                    'line-height': '1.6',
+                                    'margin': '20px'
+                                })
                                 .prepend(
-                                    '<h1 style="text-align:center;">Logistica y Administracion</h1>'
+                                    '<h1 style="text-align:center; font-size: 18pt; margin-bottom: 20px;">Logistica y Administracion</h1>'
                                 )
-                                .prepend(
-                                    '<br><br>' +
-                                    '<img src="' + logo +
-                                    '" style="position:absolute; top:20px; left:14px; width:110px;"/>'
+                                .prepend('<img src="' + logo +
+                                    '" style="display:block; margin: 0 auto 20px; width:120px;"/>'
                                 );
 
-                            // Estilo para tablas
                             $(win.document.body).find('table').css({
                                 'border-collapse': 'collapse',
-                                'width': '100%'
-                            }).find('th, td').css({
-                                'border': '2px solid #ddd',
-                                'padding': '8px'
+                                'width': '100%',
+                                'margin-top': '20px'
+                            }).find('th').css({
+                                'background-color': '#f2f2f2',
+                                'color': '#333',
+                                'border': '1px solid #ddd',
+                                'padding': '10px',
+                                'text-align': 'center'
+                            });
+
+                            $(win.document.body).find('table').find('td').css({
+                                'border': '1px solid #ddd',
+                                'padding': '8px',
+                                'text-align': 'center'
                             });
                         },
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
                         }
                     },
-
                     {
                         extend: 'colvis',
                         className: 'btn btn-secondary',
-                        text: '<i class="fas fa-columns"></i> ' + colvisButtonTrans,
-                        exportOptions: {
-                            columns: ':visible'
-                        }
+                        text: '<i class="fas fa-columns"></i> ' + colvisButtonTrans
                     }
                 ]
             });
@@ -294,17 +381,10 @@
             }
 
             // Check the user's theme preference from localStorage
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                document.body.classList.toggle('dark-mode', savedTheme === 'dark');
-                themeIcon.classList.toggle('fa-moon', savedTheme === 'dark');
-                themeIcon.classList.toggle('fa-sun', savedTheme !== 'dark');
-                applyColors(savedTheme);
-            } else {
-                // Default to light mode if no preference is set
-                applyColors('light');
-            }
-
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            themeIcon.classList.toggle('fa-moon', savedTheme === 'dark');
+            themeIcon.classList.toggle('fa-sun', savedTheme !== 'dark');
+            applyColors(savedTheme);
             // Event listener for the theme toggle button
             themeToggleButton.addEventListener('click', () => {
                 const isDarkMode = document.body.classList.toggle('dark-mode');

@@ -29,7 +29,128 @@
             width: 100%;
             margin: 0;
             line-height: 1.6;
+            font-family: 'Montserrat', 'Nunito', sans-serif;
+            font-size: 15px;
+            color: #444;
+            background-color: #f9f9f9;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-family: 'Nunito', sans-serif;
+            font-weight: bold;
+            color: #333;
+        }
+
+        p,
+        a,
+        li {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #666;
+        }
+
+        a:hover {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid #eaeaea;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar {
+            background-color: #fff;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .navbar-brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff !important;
+        }
+
+        .nav-link {
+            font-size: 0.9rem;
+            color: #555 !important;
+        }
+
+        .nav-link:hover {
+            color: #007bff !important;
+        }
+
+        .post {
+            background-color: #fff;
+            border: 1px solid #eaeaea;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .post-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 0.8rem;
+        }
+
+        .post-header .username {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .post-content {
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .post-footer .btn {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
         }
 
         /* Carousel */
@@ -47,13 +168,26 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: opacity 2s ease-in-out;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        @keyframes  fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(1.08);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         @keyframes  fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(50px);
             }
 
             to {
@@ -228,10 +362,10 @@
                     <img src="<?php echo e(asset('img/almacen.jpg')); ?>" class="d-block w-100" alt="Imagen 1">
                 </div>
                 <div class="carousel-item">
-                    <img src="<?php echo e(asset('img/raks.jpg')); ?>" class="d-block w-100" alt="Imagen 2">
+                    <img src="<?php echo e(asset('img/load.jpg')); ?>" class="d-block w-100" alt="Imagen 2">
                 </div>
                 <div class="carousel-item">
-                    <img src="<?php echo e(asset('img/load.jpg')); ?>" class="d-block w-100" alt="Imagen 2">
+                    <img src="<?php echo e(asset('img/otrorak.png')); ?>" class="d-block w-100" alt="Imagen 2">
                 </div>
             </div>
         </div>

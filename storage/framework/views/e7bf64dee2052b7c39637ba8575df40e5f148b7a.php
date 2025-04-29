@@ -28,7 +28,7 @@ if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
                         <div class="invalid-feedback">
-                            <?php echo e($message); ?>
+                            <?php echo e($errors->first('assigned_to_user_id')); ?>
 
                         </div>
                     <?php unset($message);
@@ -57,7 +57,7 @@ if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
                         <div class="invalid-feedback">
-                            <?php echo e($message); ?>
+                            <?php echo e($errors->first('assigned_to_user_id')); ?>
 
                         </div>
                     <?php unset($message);
@@ -288,7 +288,7 @@ if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
-unset($__errorArgs, $__bag); ?>">
+unset($__errorArgs, $__bag); ?>" required>
                             <?php $__currentLoopData = $assigned_to_users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $assigned_to_user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <option value="<?php echo e($id); ?>"
                                     <?php echo e((isset($ticket) && $ticket->assigned_to_user ? $ticket->assigned_to_user->id : old('assigned_to_user_id')) == $id ? 'selected' : ''); ?>>

@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html>
+<script>
+    // Aplica inmediatamente la clase de tema sin esperar al DOM
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.documentElement.classList.add('dark'); // Opcional si usas Tailwind
+    }
+</script>
 
 <head>
     <meta charset="UTF-8">
@@ -10,7 +18,7 @@
 
     <title>{{ trans('panel.site_title') }}</title>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/css/bootstrap.min.css">
+    {{-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/css/bootstrap.min.css"> --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
@@ -26,10 +34,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" rel="stylesheet" />
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-
-    <style>
-
-    </style>
     @yield('styles')
 </head>
 
@@ -186,6 +190,12 @@
                         text: '<i class="fas fa-file-csv"></i> ' + csvButtonTrans,
                         exportOptions: {
                             columns: ':visible'
+                        },
+                        customize: function(csv) {
+                            const title = 'Logistica y Administracion';
+                            const header = `"${title}"\n\n`;
+                            csv = header + csv;
+                            return csv;
                         }
                     },
                     {
@@ -194,6 +204,31 @@
                         text: '<i class="fas fa-file-excel"></i> ' + excelButtonTrans,
                         exportOptions: {
                             columns: ':visible'
+                        },
+                        customize: function(xlsx) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            var logo =
+                                'data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo/load.png'))) }}';
+
+                            // Add logo at the top
+                            var rows = sheet.getElementsByTagName('row');
+                            var newRow = sheet.createElement('row');
+                            newRow.setAttribute('r', 1);
+                            var newCell = sheet.createElement('c');
+                            newCell.setAttribute('t', 'inlineStr');
+                            newCell.setAttribute('r', 'A1');
+                            var is = sheet.createElement('is');
+                            var t = sheet.createElement('t');
+                            t.textContent = 'Logistica y Administracion';
+                            is.appendChild(t);
+                            newCell.appendChild(is);
+                            newRow.appendChild(newCell);
+                            sheet.getElementsByTagName('sheetData')[0].insertBefore(newRow, rows[
+                                0]);
+
+                            // Style cells
+                            $('row c[r]', sheet).attr('s',
+                                '42'); // Apply a style index for better formatting
                         }
                     },
                     {
@@ -204,13 +239,61 @@
                         orientation: 'landscape',
                         pageSize: 'A4',
                         title: 'Logistica y Administracion',
+                        customize: function(doc) {
+                            doc.content.splice(0, 0, {
+                                alignment: 'center',
+                                margin: [0, 0, 0, 20],
+                                image: 'data:image/png;base64,{{ base64_encode(file_get_contents(public_path('logo/load.png'))) }}',
+                                width: 120
+                            });
+                            doc.styles.tableHeader = {
+                                fillColor: '#f2f2f2',
+                                color: '#333',
+                                alignment: 'center',
+                                bold: true,
+                                fontSize: 10
+                            };
+                            doc.styles.tableBodyEven = {
+                                fillColor: '#f9f9f9'
+                            };
+                            doc.styles.tableBodyOdd = {
+                                fillColor: '#ffffff'
+                            };
+                            doc.styles.title = {
+                                alignment: 'center',
+                                fontSize: 14,
+                                bold: true,
+                                margin: [0, 0, 0, 10]
+                            };
+                            doc.styles.defaultStyle = {
+                                fontSize: 9,
+                                alignment: 'center'
+                            };
+                        },
                         exportOptions: {
-                            modifier: {
-                                selected: true
-                            },
                             columns: ':visible'
+                        },
+                        customize: function(doc) {
+                            doc.styles.tableHeader = {
+                                alignment: 'center',
+                                bold: true,
+                                fontSize: 10,
+                                color: '#333',
+                                fillColor: '#f2f2f2'
+                            };
+                            doc.styles.tableBodyEven = {
+                                alignment: 'center',
+                                fillColor: '#f9f9f9'
+                            };
+                            doc.styles.tableBodyOdd = {
+                                alignment: 'center',
+                                fillColor: '#ffffff'
+                            };
+                            doc.styles.defaultStyle = {
+                                alignment: 'center',
+                                fontSize: 9
+                            };
                         }
-
                     },
                     {
                         extend: 'print',
@@ -219,20 +302,35 @@
                         title: '',
                         customize: function(win) {
                             $(win.document.body)
-                                .css('font-size', '10pt')
+                                .css({
+                                    'font-family': 'Arial, sans-serif',
+                                    'font-size': '10pt',
+                                    'line-height': '1.6',
+                                    'margin': '20px'
+                                })
                                 .prepend(
-                                    '<h1 style="text-align:center;">Logistica y Administracion</h1>'
+                                    '<h1 style="text-align:center; font-size: 18pt; margin-bottom: 20px;">Logistica y Administracion</h1>'
                                 )
-                                .prepend('<br><br><img src="' + logo +
-                                    '" style="position:absolute; top:20px; left:14px; width:110px;"/>'
+                                .prepend('<img src="' + logo +
+                                    '" style="display:block; margin: 0 auto 20px; width:120px;"/>'
                                 );
 
                             $(win.document.body).find('table').css({
                                 'border-collapse': 'collapse',
-                                'width': '100%'
-                            }).find('th, td').css({
-                                'border': '2px solid #ddd',
-                                'padding': '8px'
+                                'width': '100%',
+                                'margin-top': '20px'
+                            }).find('th').css({
+                                'background-color': '#f2f2f2',
+                                'color': '#333',
+                                'border': '1px solid #ddd',
+                                'padding': '10px',
+                                'text-align': 'center'
+                            });
+
+                            $(win.document.body).find('table').find('td').css({
+                                'border': '1px solid #ddd',
+                                'padding': '8px',
+                                'text-align': 'center'
                             });
                         },
                         exportOptions: {
@@ -280,17 +378,10 @@
             }
 
             // Check the user's theme preference from localStorage
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                document.body.classList.toggle('dark-mode', savedTheme === 'dark');
-                themeIcon.classList.toggle('fa-moon', savedTheme === 'dark');
-                themeIcon.classList.toggle('fa-sun', savedTheme !== 'dark');
-                applyColors(savedTheme);
-            } else {
-                // Default to light mode if no preference is set
-                applyColors('light');
-            }
-
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            themeIcon.classList.toggle('fa-moon', savedTheme === 'dark');
+            themeIcon.classList.toggle('fa-sun', savedTheme !== 'dark');
+            applyColors(savedTheme);
             // Event listener for the theme toggle button
             themeToggleButton.addEventListener('click', () => {
                 const isDarkMode = document.body.classList.toggle('dark-mode');

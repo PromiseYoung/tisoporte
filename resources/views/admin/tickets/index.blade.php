@@ -1,5 +1,42 @@
 @extends('layouts.admin')
 @section('content')
+    <style>
+        /* Proccesing default datatables */
+        .dataTables_processing {
+            top: 50% !important;
+            left: 50% !important;
+            width: auto !important;
+            background: transparent !important;
+            border: none !important;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* ESPINER LOADER VIEW TICKETS */
+        .spinner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
     @can('ticket_create')
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
@@ -33,6 +70,7 @@
                         <th>
                             {{ trans('cruds.ticket.fields.priority') }}
                         </th>
+                        
                         <th>
                             {{ trans('cruds.ticket.fields.category') }}
                         </th>
@@ -214,13 +252,16 @@
                     $(".dataTables_filter").after(filters);
                 },
                 language: {
-                    processing: '<div class="spinner-container"><div class="spinner"></div><p style="margin-top: 20px;">Cargando datos...</p></div>'
+                    processing: '<div class="spinner-container"><div class="spinner"></div><p style="margin-top: 30px;">Cargando datos...</p></div>'
                 }
             };
 
             // Inicializa la DataTable
             let table = $('.datatable-Ticket').DataTable(dtOverrideGlobals);
 
+            table.on('preXhr.dt', function() {
+                $('.spinner-container').show();
+            });
             // Maneja el cambio en los select para recargar la tabla
             $('.card-body').on('change', 'select', function() {
                 table.ajax.reload(); // Recarga la tabla con los nuevos parámetros
@@ -230,6 +271,9 @@
             $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
                 table.columns.adjust();
             });
+            setInterval(function() {
+                table.ajax.reload(null, false); // Recarga la tabla sin reiniciar la paginación
+            }, 10000); // Cada 15 segundos
         });
     </script>
 @endsection
