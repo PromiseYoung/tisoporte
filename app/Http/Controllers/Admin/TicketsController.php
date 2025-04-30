@@ -248,7 +248,6 @@ class TicketsController extends Controller
         $comment = $ticket->comments()->create([
             'author_name' => $user->name,
             'author_email' => $user->email,
-
             'user_id' => $user->id,
             'comment_text' => $request->comment_text
         ]);

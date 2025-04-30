@@ -8,7 +8,6 @@ use App\Http\Requests\StorePriorityRequest;
 use App\Http\Requests\UpdatePriorityRequest;
 use App\Priority;
 use Gate;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PrioritiesController extends Controller
