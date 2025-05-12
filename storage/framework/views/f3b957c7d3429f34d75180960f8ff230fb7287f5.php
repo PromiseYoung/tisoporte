@@ -227,11 +227,11 @@
                             newCell.appendChild(is);
                             newRow.appendChild(newCell);
                             sheet.getElementsByTagName('sheetData')[0].insertBefore(newRow, rows[
-                            0]);
+                                0]);
 
                             // Style cells
                             $('row c[r]', sheet).attr('s',
-                            '42'); // Apply a style index for better formatting
+                                '42'); // Apply a style index for better formatting
                         }
                     },
                     {

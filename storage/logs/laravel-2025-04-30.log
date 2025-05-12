@@ -1,0 +1,63 @@
+[2025-04-30 16:49:25] local.ERROR: include(C:\wamp64\www\tisoporte\vendor\composer/../nesbot/carbon/src/Carbon/Laravel/ServiceProvider.php): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): include(C:\\wamp64\\www\\tisoporte\\vendor\\composer/../nesbot/carbon/src/Carbon/Laravel/ServiceProvider.php): Failed to open stream: No such file or directory at C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php:576)
+[stacktrace]
+#0 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(576): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'include(C:\\\\wamp...', 'C:\\\\wamp64\\\\www\\\\t...', 576)
+#1 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(576): include()
+#2 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(427): Composer\\Autoload\\{closure}('C:\\\\wamp64\\\\www\\\\t...')
+#3 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(747): Composer\\Autoload\\ClassLoader->loadClass('Carbon\\\\Laravel\\\\...')
+#4 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(681): Illuminate\\Foundation\\Application->resolveProvider('Carbon\\\\Laravel\\\\...')
+#5 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\ProviderRepository.php(75): Illuminate\\Foundation\\Application->register('Carbon\\\\Laravel\\\\...')
+#6 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(661): Illuminate\\Foundation\\ProviderRepository->load(Array)
+#7 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\RegisterProviders.php(17): Illuminate\\Foundation\\Application->registerConfiguredProviders()
+#8 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(237): Illuminate\\Foundation\\Bootstrap\\RegisterProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#9 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(310): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#10 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#11 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#12 {main}
+"} 
+[2025-04-30 16:49:33] local.ERROR: include(C:\wamp64\www\tisoporte\vendor\composer/../nesbot/carbon/src/Carbon/Laravel/ServiceProvider.php): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): include(C:\\wamp64\\www\\tisoporte\\vendor\\composer/../nesbot/carbon/src/Carbon/Laravel/ServiceProvider.php): Failed to open stream: No such file or directory at C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php:576)
+[stacktrace]
+#0 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(576): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'include(C:\\\\wamp...', 'C:\\\\wamp64\\\\www\\\\t...', 576)
+#1 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(576): include()
+#2 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(427): Composer\\Autoload\\{closure}('C:\\\\wamp64\\\\www\\\\t...')
+#3 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(747): Composer\\Autoload\\ClassLoader->loadClass('Carbon\\\\Laravel\\\\...')
+#4 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(681): Illuminate\\Foundation\\Application->resolveProvider('Carbon\\\\Laravel\\\\...')
+#5 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\ProviderRepository.php(75): Illuminate\\Foundation\\Application->register('Carbon\\\\Laravel\\\\...')
+#6 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(661): Illuminate\\Foundation\\ProviderRepository->load(Array)
+#7 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\RegisterProviders.php(17): Illuminate\\Foundation\\Application->registerConfiguredProviders()
+#8 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(237): Illuminate\\Foundation\\Bootstrap\\RegisterProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#9 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(310): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#10 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#11 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#12 {main}
+"} 
+[2025-04-30 16:49:44] local.ERROR: include(C:\wamp64\www\tisoporte\vendor\composer/../laravel/tinker/src/TinkerServiceProvider.php): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): include(C:\\wamp64\\www\\tisoporte\\vendor\\composer/../laravel/tinker/src/TinkerServiceProvider.php): Failed to open stream: No such file or directory at C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php:576)
+[stacktrace]
+#0 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(576): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'include(C:\\\\wamp...', 'C:\\\\wamp64\\\\www\\\\t...', 576)
+#1 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(576): include()
+#2 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(427): Composer\\Autoload\\{closure}('C:\\\\wamp64\\\\www\\\\t...')
+#3 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(818): Composer\\Autoload\\ClassLoader->loadClass('Laravel\\\\Tinker\\\\...')
+#4 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(798): Illuminate\\Foundation\\Application->registerDeferredProvider('Laravel\\\\Tinker\\\\...', 'command.tinker')
+#5 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(774): Illuminate\\Foundation\\Application->loadDeferredProvider('command.tinker')
+#6 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(313): Illuminate\\Foundation\\Application->loadDeferredProviders()
+#7 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#8 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#9 {main}
+"} 
+[2025-04-30 16:50:09] local.ERROR: include(C:\wamp64\www\tisoporte\vendor\composer/../filp/whoops/src/Whoops/Handler/HandlerInterface.php): Failed to open stream: No such file or directory {"exception":"[object] (ErrorException(code: 0): include(C:\\wamp64\\www\\tisoporte\\vendor\\composer/../filp/whoops/src/Whoops/Handler/HandlerInterface.php): Failed to open stream: No such file or directory at C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php:576)
+[stacktrace]
+#0 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(576): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'include(C:\\\\wamp...', 'C:\\\\wamp64\\\\www\\\\t...', 576)
+#1 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(576): include()
+#2 C:\\wamp64\\www\\tisoporte\\vendor\\composer\\ClassLoader.php(427): Composer\\Autoload\\{closure}('C:\\\\wamp64\\\\www\\\\t...')
+#3 [internal function]: Composer\\Autoload\\ClassLoader->loadClass('Whoops\\\\Handler\\\\...')
+#4 C:\\wamp64\\www\\tisoporte\\vendor\\facade\\ignition\\src\\IgnitionServiceProvider.php(227): interface_exists('Whoops\\\\Handler\\\\...')
+#5 C:\\wamp64\\www\\tisoporte\\vendor\\facade\\ignition\\src\\IgnitionServiceProvider.php(133): Facade\\Ignition\\IgnitionServiceProvider->registerExceptionRenderer()
+#6 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(684): Facade\\Ignition\\IgnitionServiceProvider->register()
+#7 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\ProviderRepository.php(75): Illuminate\\Foundation\\Application->register(Object(Facade\\Ignition\\IgnitionServiceProvider))
+#8 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(661): Illuminate\\Foundation\\ProviderRepository->load(Array)
+#9 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\RegisterProviders.php(17): Illuminate\\Foundation\\Application->registerConfiguredProviders()
+#10 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(237): Illuminate\\Foundation\\Bootstrap\\RegisterProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#11 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(310): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#12 C:\\wamp64\\www\\tisoporte\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(127): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#13 Command line code(1): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#14 {main}
+"} 

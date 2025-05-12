@@ -52,56 +52,60 @@
 
         </div>
         <div class="card-body">
-            <table
-                class=" table table-bordered table-hover table-sm dt-responsive nowrap ajaxTable datatable datatable-Ticket">
-                <thead class="thead-dark">
-                    <tr>
-                        <th width="10">
+            <div class="table-responsive">
+                <table
+                    class="table table-striped table-hover table-bordered table-sm dt-responsive nowrap ajaxTable datatable datatable-Ticket">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th width="10">
+                                <i class="fas fa-check-square"></i>
+                            </th>
+                            <th>
+                                <i class="fas fa-hashtag"></i> <?php echo e(trans('cruds.ticket.fields.id')); ?>
 
-                        </th>
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.id')); ?>
+                            </th>
+                            <th>
+                                <i class="fas fa-heading"></i> <?php echo e(trans('cruds.ticket.fields.title')); ?>
 
-                        </th>
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.title')); ?>
+                            </th>
+                            <th>
+                                <i class="fas fa-info-circle"></i> <?php echo e(trans('cruds.ticket.fields.status')); ?>
 
-                        </th>
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.status')); ?>
+                            </th>
+                            <th>
+                                <i class="fas fa-exclamation-triangle"></i> <?php echo e(trans('cruds.ticket.fields.priority')); ?>
 
-                        </th>
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.priority')); ?>
+                            </th>
+                            <th>
+                                <i class="fas fa-tags"></i> <?php echo e(trans('cruds.ticket.fields.category')); ?>
 
-                        </th>
-                        
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.category')); ?>
+                            </th>
+                            <th>
+                                <i class="fas fa-map-marker-alt"></i> <?php echo e(trans('cruds.ticket.fields.localidad')); ?>
 
-                        </th>
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.localidad')); ?>
+                            </th>
+                            <th>
+                                <i class="fas fa-user"></i> <?php echo e(trans('cruds.ticket.fields.author_name')); ?>
 
-                        </th>
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.author_name')); ?>
+                            </th>
+                            <th>
+                                <i class="fas fa-envelope"></i> <?php echo e(trans('cruds.ticket.fields.author_email')); ?>
 
-                        </th>
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.author_email')); ?>
+                            </th>
+                            <th>
+                                <i class="fas fa-user-check"></i> <?php echo e(trans('cruds.ticket.fields.assigned_to_user')); ?>
 
-                        </th>
-                        <th>
-                            <?php echo e(trans('cruds.ticket.fields.assigned_to_user')); ?>
-
-                        </th>
-                        <th>
-                            &nbsp;
-                        </th>
-                    </tr>
-                </thead>
-            </table>
+                            </th>
+                            <th>
+                                <i class="fas fa-cogs"></i> &nbsp;
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated by DataTables -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 <?php $__env->stopSection(); ?>

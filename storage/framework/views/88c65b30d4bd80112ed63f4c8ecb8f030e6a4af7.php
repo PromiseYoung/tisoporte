@@ -29,7 +29,7 @@
             width: 100%;
             margin: 0;
             line-height: 1.6;
-            font-family: 'Montserrat', 'Nunito', sans-serif;
+            font-family: 'Poppins', 'Roboto', 'Nunito', sans-serif;
             font-size: 15px;
             color: #444;
             background-color: #f9f9f9;
@@ -359,7 +359,7 @@
         <div class="carousel slide carousel-fade" id="imageCarousel" data-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="<?php echo e(asset('img/almacen.jpg')); ?>" class="d-block w-100" alt="Imagen 1">
+                    <img src="<?php echo e(asset('img/picking.jpg')); ?>" class="d-block w-100" alt="Imagen 1">
                 </div>
                 <div class="carousel-item">
                     <img src="<?php echo e(asset('img/load.jpg')); ?>" class="d-block w-100" alt="Imagen 2">
