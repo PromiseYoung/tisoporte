@@ -64,7 +64,7 @@
                     </select>
                     @error('status_id')
                         <div class="invalid-feedback">
-                            {{ $message }}
+                            {{ $errors->first('assigned_to_user_id') }}
                         </div>
                     @enderror
                 </div>
@@ -81,7 +81,7 @@
                     </select>
                     @error('priority_id')
                         <div class="invalid-feedback">
-                            {{ $message }}
+                            {{ $errors->first('priority_id') }}
                         </div>
                     @enderror
                 </div>

@@ -15,8 +15,8 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class=" table table-striped table-hover table-sm dt-responsive nowrap datatable datatable-User">
-                    <thead class="thead-dark">
+                <table class="table table-bordered table-hover table-sm dt-responsive nowrap datatable datatable-User">
+                    <thead class="bg-primary text-white">
                         <tr>
                             <th width="10">
 
@@ -61,35 +61,37 @@
                                 </td>
                                 <td>
                                     @foreach ($user->roles as $key => $item)
-                                        <span class="badge badge-info">{{ $item->title }}</span>
+                                        <span class="badge badge-pill badge-info">{{ $item->title }}</span>
                                     @endforeach
                                 </td>
                                 <td>
-                                    @can('user_show')
-                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.users.show', $user->id) }}">
-                                            {{ trans('global.view') }}
-                                        </a>
-                                    @endcan
+                                    <div class="btn-group" role="group" aria-label="User Actions">
+                                        @can('user_show')
+                                            <a class="btn btn-sm btn-outline-primary"
+                                                href="{{ route('admin.users.show', $user->id) }}">
+                                                {{ trans('global.view') }}
+                                            </a>
+                                        @endcan
 
-                                    @can('user_edit')
-                                        <a class="btn btn-xs btn-info" href="{{ route('admin.users.edit', $user->id) }}">
-                                            {{ trans('global.edit') }}
-                                        </a>
-                                    @endcan
+                                        @can('user_edit')
+                                            <a class="btn btn-sm btn-outline-info"
+                                                href="{{ route('admin.users.edit', $user->id) }}">
+                                                {{ trans('global.edit') }}
+                                            </a>
+                                        @endcan
 
-                                    @can('user_delete')
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                                            onsubmit="return confirm('{{ trans('global.areYouSure') }}');"
-                                            style="display: inline-block;">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="submit" class="btn btn-xs btn-danger"
-                                                value="{{ trans('global.delete') }}">
-                                        </form>
-                                    @endcan
-
+                                        @can('user_delete')
+                                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                                                onsubmit="return confirm('{{ trans('global.areYouSure') }}');"
+                                                style="display: inline-block;">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                <input type="submit" class="btn btn-sm btn-outline-danger"
+                                                    value="{{ trans('global.delete') }}">
+                                            </form>
+                                        @endcan
+                                    </div>
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>

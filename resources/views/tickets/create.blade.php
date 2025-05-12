@@ -12,7 +12,7 @@
 
                 <div class="card border-0  rounded-3">
                     <div class="card-header bg-success text-white text-center rounded-top">
-                        <h5 class="mb-0">Crear Ticket</h5>
+                        <h5 class="mb-0">Levantar Solicitud de Soporte TI</h5>
                     </div>
 
                     <div class="card-body bg-light text-dark p-4">
@@ -20,7 +20,7 @@
                             @csrf
 
                             <div class="mb-3">
-                                <label for="author_name" class="form-label">Nombre del solicitante</label>
+                                <label for="author_name" class="form-label">Escribe tu nombre completo</label>
                                 <input id="author_name" type="text"
                                     class="form-control @error('author_name') is-invalid @enderror rounded-3"
                                     name="author_name" value="{{ old('author_name') }}" required autocomplete="name"
@@ -96,7 +96,7 @@
                                 <label for="localidad" class="form-label">Localidad</label>
                                 <select id="localidad" name="localidad"
                                     class="form-select @error('localidad') is-invalid @enderror rounded-3" required>
-                                    <option selected disabled>Ubicacion de Almacen</option>
+                                    <option selected disabled>Selecciona el Almacen</option>
                                     @foreach ($localidades as $localidad)
                                         <option value="{{ $localidad->nombre }}"
                                             {{ old('localidad') == $localidad->nombre ? 'selected' : '' }}>
