@@ -98,7 +98,7 @@
                     </select>
                     @error('category_id')
                         <div class="invalid-feedback">
-                            {{ $message }}
+                            {{ $errors->first('category_id') }}
                         </div>
                     @enderror
                 </div>
@@ -165,7 +165,7 @@
                         </select>
                         @error('assigned_to_user_id')
                             <div class="invalid-feedback">
-                                {{ $message }}
+                                {{ $assigned_to_user_id }}
                             </div>
                         @enderror
                     </div>
