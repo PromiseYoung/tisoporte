@@ -96,10 +96,8 @@ class Ticket extends Model implements HasMedia
 
     public function scopeFilterTickets($query)
     {
-        $query->when(request()->input('priority'), function ($query) {
-            $query->whereHas('priority', function ($query) {
-                $query->whereId(request()->input('priority'));
-            });
+        $query->when(request('priority'), function ($query, $priority) {
+            $query->whereHas('priority', fn($q) => $q->where('id', $priority));
         })
             ->when(request()->input('category'), function ($query) {
                 $query->whereHas('category', function ($query) {

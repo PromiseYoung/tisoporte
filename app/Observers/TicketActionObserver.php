@@ -16,19 +16,20 @@ class TicketActionObserver
      */
     public function created(Ticket $model)
     {
+        // Define los datos de la notificación
         $data = [
             'action' => 'New ticket has been created!',
             'model_name' => 'Ticket',
             'ticket' => $model,
         ];
 
-        // Obtén todos los usuarios con el rol de Admin
-        $users = \App\User::whereHas('roles', function ($query) {
-            $query->where('title', 'Admin');
-        })->get();
+        // Obtén todos los usuarios con el rol de Admin de manera eficiente
+        $users = \App\User::role('Admin')->get();
 
-        // Enviar notificación a todos los usuarios con el rol de Admin
-        Notification::send($users, new DataChangeEmailNotification($data));
+        // Verifica si hay usuarios antes de enviar la notificación
+        if ($users->isNotEmpty()) {
+            Notification::send($users, new DataChangeEmailNotification($data));
+        }
     }
 
     /**
@@ -40,7 +41,7 @@ class TicketActionObserver
     public function updated(Ticket $model)
     {
         // Verifica si el campo 'assigned_to_user_id' ha cambiado
-        if ($model->isDirty('assigned_to_user_id')) {
+        if ($model->getOriginal('assigned_to_user_id')) {
             $user = $model->assigned_to_user;
 
             // Verifica si el usuario asignado no es nulo
