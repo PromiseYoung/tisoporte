@@ -13,6 +13,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RolesController extends Controller
 {
+    /**
+     * Muestra la lista de roles existentes.
+     * Verifica permisos antes de mostrar la vista.
+     */
     public function index()
     {
         abort_if(Gate::denies('role_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -22,6 +26,10 @@ class RolesController extends Controller
         return view('admin.roles.index', compact('roles'));
     }
 
+    /**
+     * Muestra el formulario para crear un nuevo rol.
+     * Carga todos los permisos disponibles para asignar al rol.
+     */
     public function create()
     {
         abort_if(Gate::denies('role_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -31,6 +39,10 @@ class RolesController extends Controller
         return view('admin.roles.create', compact('permissions'));
     }
 
+    /**
+     * Guarda un nuevo rol en la base de datos.
+     * Sincroniza los permisos seleccionados con el nuevo rol.
+     */
     public function store(StoreRoleRequest $request)
     {
         $role = Role::create($request->all());
@@ -39,6 +51,10 @@ class RolesController extends Controller
         return redirect()->route('admin.roles.index');
     }
 
+    /**
+     * Muestra el formulario para editar un rol existente.
+     * Carga los permisos actuales y todos los disponibles.
+     */
     public function edit(Role $role)
     {
         abort_if(Gate::denies('role_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -50,6 +66,10 @@ class RolesController extends Controller
         return view('admin.roles.edit', compact('permissions', 'role'));
     }
 
+    /**
+     * Actualiza un rol existente en la base de datos.
+     * Sincroniza los permisos seleccionados con el rol.
+     */
     public function update(UpdateRoleRequest $request, Role $role)
     {
         $role->update($request->all());
@@ -58,6 +78,9 @@ class RolesController extends Controller
         return redirect()->route('admin.roles.index');
     }
 
+    /**
+     * Muestra los detalles de un rol específico, incluyendo sus permisos.
+     */
     public function show(Role $role)
     {
         abort_if(Gate::denies('role_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -67,6 +90,9 @@ class RolesController extends Controller
         return view('admin.roles.show', compact('role'));
     }
 
+    /**
+     * Elimina un rol específico de la base de datos.
+     */
     public function destroy(Role $role)
     {
         abort_if(Gate::denies('role_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -76,6 +102,9 @@ class RolesController extends Controller
         return back();
     }
 
+    /**
+     * Elimina múltiples roles seleccionados de forma masiva.
+     */
     public function massDestroy(MassDestroyRoleRequest $request)
     {
         Role::whereIn('id', request('ids'))->delete();
