@@ -115,13 +115,19 @@
                     @enderror
                 </div>
 
-                <div class="form-group {{ $errors->has('author_name') ? 'has-error' : '' }}">
-                    <label for="author_name">{{ trans('cruds.ticket.fields.author_name') }}</label>
-                    <input type="text" id="author_name" name="author_name" class="form-control form-control-lg"
-                        value="{{ old('author_name', isset($ticket) ? $ticket->author_name : '') }}" required>
-                    @if ($errors->has('author_name'))
+                <div class="form-group {{ $errors->has('author_id') ? 'has-error' : '' }}">
+                    <label for="author_id">{{ trans('cruds.ticket.fields.author_name') }}</label>
+                    <select id="author_id" name="author_id" class="form-control form-control-lg select2" required>
+                        @foreach ($authors as $id => $author)
+                            <option value="{{ $id }}"
+                                {{ old('author_id', isset($ticket) ? $ticket->author_id : '') == $id ? 'selected' : '' }}>
+                                {{ $author['author_name'] ?? $author }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @if ($errors->has('author_id'))
                         <div class="invalid-feedback d-block">
-                            {{ $errors->first('author_name') }}
+                            {{ $errors->first('author_id') }}
                         </div>
                     @endif
                     <small class="form-text text-muted">

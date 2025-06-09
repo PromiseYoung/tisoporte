@@ -58,7 +58,7 @@
                                     {{ $comment->ticket->title ?? '' }}
                                 </td>
                                 <td>
-                                    {{ $comment->author_name ?? '' }}
+                                    {{ $comment->author->name ?? '' }}
                                 </td>
                                 <td>
                                     {{ $comment->author_email ?? '' }}

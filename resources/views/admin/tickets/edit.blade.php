@@ -18,7 +18,7 @@
                         value="{{ old('title', isset($ticket) ? $ticket->title : '') }}" required>
                     @error('title')
                         <div class="invalid-feedback">
-                            {{ $errors->first('assigned_to_user_id') }}
+                            {{ $message }}
                         </div>
                     @enderror
                     <small class="form-text text-muted">
@@ -31,7 +31,7 @@
                     <textarea id="content" name="content" class="form-control @error('content') is-invalid @enderror">{{ old('content', isset($ticket) ? $ticket->content : '') }}</textarea>
                     @error('content')
                         <div class="invalid-feedback">
-                            {{ $errors->first('assigned_to_user_id') }}
+                            {{ $message }}
                         </div>
                     @enderror
                     <small class="form-text text-muted">
@@ -64,7 +64,7 @@
                     </select>
                     @error('status_id')
                         <div class="invalid-feedback">
-                            {{ $errors->first('assigned_to_user_id') }}
+                            {{ $message }}
                         </div>
                     @enderror
                 </div>
@@ -81,7 +81,7 @@
                     </select>
                     @error('priority_id')
                         <div class="invalid-feedback">
-                            {{ $errors->first('priority_id') }}
+                            {{ $message }}
                         </div>
                     @enderror
                 </div>
@@ -98,7 +98,7 @@
                     </select>
                     @error('category_id')
                         <div class="invalid-feedback">
-                            {{ $errors->first('category_id') }}
+                            {{ $message }}
                         </div>
                     @enderror
                 </div>
@@ -120,21 +120,26 @@
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="author_name">{{ trans('cruds.ticket.fields.author_name') }}</label>
-                    <input type="text" id="author_name" name="author_name"
-                        class="form-control @error('author_name') is-invalid @enderror"
-                        value="{{ old('author_name', isset($ticket) ? $ticket->author_name : '') }}"
-                        placeholder="Coloca el nombre del usuario a atender" required>
-                    @error('author_name')
-                        <div class="invalid-feedback">
-                            {{ $message }}
+                <div class="form-group {{ $errors->has('author_id') ? 'has-error' : '' }}">
+                    <label for="author_id">{{ trans('cruds.ticket.fields.author_name') }}</label>
+                    <select id="author_id" name="author_id" class="form-control form-control-lg select2" required>
+                        @foreach ($authors as $id => $author)
+                            <option value="{{ $id }}"
+                                {{ old('author_id', isset($ticket) ? $ticket->author_id : '') == $id ? 'selected' : '' }}>
+                                {{ $author['author_name'] ?? $author }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @if ($errors->has('author_id'))
+                        <div class="invalid-feedback d-block">
+                            {{ $errors->first('author_id') }}
                         </div>
-                    @enderror
+                    @endif
                     <small class="form-text text-muted">
                         {{ trans('cruds.ticket.fields.author_name_helper') }}
                     </small>
                 </div>
+
 
                 <div class="form-group">
                     <label for="author_email">{{ trans('cruds.ticket.fields.author_email') }}</label>
@@ -165,7 +170,7 @@
                         </select>
                         @error('assigned_to_user_id')
                             <div class="invalid-feedback">
-                                {{ $assigned_to_user_id }}
+                                {{ $message }}
                             </div>
                         @enderror
                     </div>

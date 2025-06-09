@@ -214,7 +214,7 @@
                                     var label = context.label || '';
                                     var value = context.raw || 0;
                                     var percentage = percentages[index] || 0;
-                                    var analyst = analysts[index] || 'Desconocido';
+                                    var analyst = analysts[index] || 'Por Asignar';
                                     return `${label}: ${percentage}% (${value} tickets) | Analista TI: ${analyst}`;
                                 }
                             }

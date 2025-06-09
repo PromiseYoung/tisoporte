@@ -65,7 +65,7 @@
                         </tr>
                         <tr>
                             <th class="dark-mode-th">{{ trans('cruds.ticket.fields.author_name') }}</th>
-                            <td class="dark-mode-td">{{ $ticket->author_name }}</td>
+                            <td class="dark-mode-td">{{ $ticket->author_name ?? ($ticket->author->name ?? 'N/A') }}</td>
                         </tr>
                         <tr>
                             <th class="dark-mode-th">{{ trans('cruds.ticket.fields.author_email') }}</th>
@@ -83,7 +83,7 @@
                                         <div class="col">
                                             <p class="fw-bold mb-1">
                                                 <a href="mailto:{{ $comment->author_email }}"
-                                                    class="dark-mode-link">{{ $comment->author_name }}</a>
+                                                    class="dark-mode-link">{{ $comment->author_name ?? ($comment->author->name ?? 'N/A') }}</a>
                                                 <small
                                                     class="text-muted">({{ $comment->created_at->locale('es')->format('d-m-Y H:i:s A') }})</small>
                                             </p>

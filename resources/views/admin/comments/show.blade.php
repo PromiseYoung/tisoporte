@@ -19,7 +19,7 @@
                         </tr>
                         <tr>
                             <th>{{ trans('cruds.comment.fields.author_name') }}</th>
-                            <td>{{ $comment->author_name }}</td>
+                            <td>{{ $comment->author->name ?? '' }}</td>
                         </tr>
                         <tr>
                             <th>{{ trans('cruds.comment.fields.author_email') }}</th>
