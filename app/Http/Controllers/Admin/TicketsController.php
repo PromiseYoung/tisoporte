@@ -9,6 +9,7 @@ use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Localidad;
 use App\Category;
+use App\Authors;
 use App\Priority;
 use App\Status;
 use App\Ticket;
@@ -40,13 +41,13 @@ class TicketsController extends Controller
                 $deleteGate = 'ticket_delete';
                 $crudRoutePart = 'tickets';
 
-                return view('partials.datatablesActions', compact(
-                    'viewGate',
-                    'editGate',
-                    'deleteGate',
-                    'crudRoutePart',
-                    'row'
-                ));
+                return view('partials.datatablesActions', [
+                    'viewGate' => $viewGate,
+                    'editGate' => $editGate,
+                    'deleteGate' => $deleteGate,
+                    'crudRoutePart' => $crudRoutePart,
+                    'row' => $row,
+                ]);
             });
 
             $table->editColumn('id', function ($row) {
@@ -65,6 +66,7 @@ class TicketsController extends Controller
             $table->addColumn('priority_name', function ($row) {
                 return $row->priority ? $row->priority->name : '';
             });
+
             $table->addColumn('priority_color', function ($row) {
                 return $row->priority ? $row->priority->color : '#000000';
             });
@@ -79,12 +81,15 @@ class TicketsController extends Controller
             $table->addColumn('localidad_nombre', function ($row) {
                 return $row->localidad ? $row->localidad->nombre : '';  // Usamos el nombre de la localidad
             });
-            $table->editColumn('author_name', function ($row) {
-                return $row->author_name ? $row->author_name : "";
+            // revisar la parte de la validacion del nombres de usuario
+            $table->addColumn('author_name', function ($row) {
+                return $row->author ? $row->author->name : '';
             });
+
             $table->editColumn('author_email', function ($row) {
                 return $row->author_email ? $row->author_email : "";
             });
+
             $table->addColumn('assigned_to_user_name', function ($row) {
                 return $row->assigned_to_user ? $row->assigned_to_user->name : '';
             });
@@ -97,7 +102,7 @@ class TicketsController extends Controller
                 return route('admin.tickets.show', $row->id);
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'status', 'priority', 'category', 'assigned_to_user', 'localidad']);
+            $table->rawColumns(['actions', 'placeholder', 'status', 'priority', 'category', 'assigned_to_user', 'localidad','author']);
 
             return $table->make(true);
         }
@@ -106,8 +111,9 @@ class TicketsController extends Controller
         $statuses = Status::all();
         $categories = Category::all();
         $localidades = Localidad::all();
+        $authors = Authors::all();
 
-        return view('admin.tickets.index', compact('priorities', 'statuses', 'categories', 'localidades'));
+        return view('admin.tickets.index', compact('priorities', 'statuses', 'categories', 'localidades', 'authors'));
     }
 
     public function create()
@@ -120,6 +126,8 @@ class TicketsController extends Controller
 
         $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
+        $authors = Authors::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+
         $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $assigned_to_users = User::whereHas('roles', function ($query) {
@@ -129,7 +137,7 @@ class TicketsController extends Controller
             ->pluck('name', 'id')
             ->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.tickets.create', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'localidad'));
+        return view('admin.tickets.create', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'localidad', 'authors'));
     }
 
     public function store(StoreTicketRequest $request)
@@ -171,7 +179,7 @@ class TicketsController extends Controller
         $statuses = Status::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $priorities = Priority::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
+        $authors = Authors::all()->pluck('name', 'id');
         $categories = Category::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), '');
@@ -185,7 +193,7 @@ class TicketsController extends Controller
 
         $ticket->load('status', 'priority', 'category', 'assigned_to_user', 'localidad');
 
-        return view('admin.tickets.edit', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'ticket', 'localidad'));
+        return view('admin.tickets.edit', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'ticket', 'localidad', 'authors'));
     }
 
     public function update(UpdateTicketRequest $request, Ticket $ticket)
@@ -248,6 +256,7 @@ class TicketsController extends Controller
         $comment = $ticket->comments()->create([
             'author_name' => $user->name,
             'author_email' => $user->email,
+
             'user_id' => $user->id,
             'comment_text' => $request->comment_text
         ]);
