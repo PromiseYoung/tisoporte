@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- CSRF Token Security -->
+    <meta http-equiv="x-dns-prefetch-control" content="off">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Logística y Administración</title>
 
