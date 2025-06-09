@@ -70,7 +70,7 @@
                                 </tr>
                                 <tr>
                                     <th>{{ trans('cruds.ticket.fields.author_name') }}</th>
-                                    <td>{{ $ticket->author_name }}</td>
+                                    <td>{{ $ticket->author_name ?? ($ticket->author->name ?? 'N/A') }}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ trans('cruds.ticket.fields.author_email') }}</th>
@@ -86,7 +86,7 @@
                                     <p class="mb-1 fw-bold">
                                         <a href="mailto:{{ $comment->author_email }}"
                                             class="text-decoration-none text-dark">
-                                            {{ $comment->author_name }}
+                                            {{ $comment->authors->name ?? $comment->author_name }}
                                         </a>
                                         <span class="text-muted">({{ $comment->created_at->format('d-m-Y H:i') }})</span>
                                     </p>
