@@ -57,7 +57,7 @@ class HomeController
     private function getKPIs()
     {
         return [
-            'totalTickets' => Ticket::count(),
+            'totalTickets' => Ticket::withoutGlobalScopes()->count(),
             'openTickets' => $this->getTicketsByStatus('ABIERTO'),
             'closedTickets' => $this->getTicketsByStatus('CERRADO'),
         ];
@@ -68,9 +68,7 @@ class HomeController
      */
     private function getTicketsByStatus($status)
     {
-        return Ticket::whereHas('status', fn($query) => $query->where('name', $status))->exists()
-            ? Ticket::whereHas('status', fn($query) => $query->where('name', $status))->count()
-            : 0;
+        return Ticket::whereRelation('status', 'name', $status)->count();
     }
 
     /**
@@ -78,9 +76,8 @@ class HomeController
      */
     private function calculateClosedPercentage($kpis)
     {
-        return ($kpis['totalTickets'] > 0)
-
-            ? round(($kpis['closedTickets'] / $kpis['totalTickets']) * 100, 1)
+        return $kpis['totalTickets'] > 0
+            ? number_format(($kpis['closedTickets'] / $kpis['totalTickets']) * 100, 2)
             : 0;
     }
     /**
@@ -88,16 +85,29 @@ class HomeController
      */
     private function getLineChartData()
     {
-        $admins = User::whereHas('roles', fn($query) => $query->whereIn('title', ['Analista TI', 'ADMIN']))->get();
+        $admins = User::whereHas('roles', function ($query) {
+            $query->whereIn('title', ['Analista TI', 'ADMIN', 'MANTENIMIENTOS Y REPARACION']);
+        })->with([
+                    'tickets' => function ($query) {
+                        $query->select(
+                            'assigned_to_user_id',
+                            DB::raw('MONTH(created_at) as month'),
+                            DB::raw('COUNT(*) as count')
+                        )
+                            ->whereYear('created_at', Carbon::now()->year)
+                            ->groupBy('assigned_to_user_id', 'month');
+                    }
+                ])->get();
 
-        $analystsData = [];
-        foreach ($admins as $analyst) {
-            $analystsData[] = [
+        $analystsData = $admins->map(function ($analyst) {
+            $monthlyTickets = $analyst->tickets->pluck('count', 'month')->toArray();
+            return [
                 'name' => $analyst->name,
-                'data' => $this->getMonthlyTicketsData($analyst->id),
+                'data' => array_map(fn($m) => $monthlyTickets[$m] ?? 0, range(1, 12)),
             ];
-        }
-        return $analystsData;
+        });
+
+        return $analystsData->toArray();
     }
     /**
      * Obtener los tickets mensuales asignados a un analista
@@ -142,12 +152,15 @@ class HomeController
      */
     private function getTicketsData($startDate, $endDate, $analystId)
     {
-        return Ticket::select('category_id', 'assigned_to_user_id', DB::raw('COUNT(*) as total'))
-            ->with(['category', 'assigned_to_user'])
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->when($analystId, fn($query) => $query->where('assigned_to_user_id', $analystId))
-            ->groupBy('category_id', 'assigned_to_user_id')
-            ->get();
+        $query = Ticket::select('category_id', 'assigned_to_user_id', DB::raw('COUNT(*) as total'))
+            ->with(['category:id,name', 'assigned_to_user:id,name'])
+            ->whereBetween('created_at', [$startDate, $endDate]);
+
+        if ($analystId) {
+            $query->where('assigned_to_user_id', $analystId);
+        }
+
+        return $query->groupBy('category_id', 'assigned_to_user_id')->get();
     }
 
     /**
