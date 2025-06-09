@@ -9,6 +9,7 @@ use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Ticket;
 use App\User;
+use App\Authors;
 use Gate;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -49,9 +50,11 @@ class CommentsController extends Controller
 
         $users = User::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
+        $author = Authors::all()->pluck('name', 'id')->prepend('global.pleaseSelect', '');
+
         $comment->load('ticket', 'user');
 
-        return view('admin.comments.edit', compact('tickets', 'users', 'comment'));
+        return view('admin.comments.edit', compact('tickets', 'users', 'comment','author'));
     }
 
     public function update(UpdateCommentRequest $request, Comment $comment)
