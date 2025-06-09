@@ -37,4 +37,10 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    //aplica la relacion de author
+    public function author()
+    {
+        return $this->belongsTo(Authors::class, 'user_id');
+    }
 }
