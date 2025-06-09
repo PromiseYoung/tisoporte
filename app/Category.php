@@ -3,11 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use SoftDeletes;
+
 
     public $table = 'categories';
 
@@ -21,9 +20,7 @@ class Category extends Model
         'name',
         'color',
         'user_id',
-        'created_at',
-        'updated_at',
-        'deleted_at',
+
     ];
 
     public function tickets()
