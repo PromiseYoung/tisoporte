@@ -39,6 +39,7 @@ class Ticket extends Model implements HasMedia
         'priority_id',
         'category_id',
         'author_name',
+        'author_id',
         'author_email',
         'assigned_to_user_id',
         'localidad_id',  // Agregar este campo
@@ -94,10 +95,17 @@ class Ticket extends Model implements HasMedia
         return $this->belongsTo(Localidad::class);
     }
 
+    public function author()
+    {
+        return $this->belongsTo(Authors::class, 'author_id');
+    }
+
     public function scopeFilterTickets($query)
     {
-        $query->when(request('priority'), function ($query, $priority) {
-            $query->whereHas('priority', fn($q) => $q->where('id', $priority));
+        $query->when(request()->input('priority'), function ($query) {
+            $query->whereHas('priority', function ($query) {
+                $query->whereId(request()->input('priority'));
+            });
         })
             ->when(request()->input('category'), function ($query) {
                 $query->whereHas('category', function ($query) {
