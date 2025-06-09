@@ -25,11 +25,12 @@ class TicketController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
-        $priorities = Priority::all();
-        $localidades = Localidad::all(); // Obtener todas las localidades
-        $users = User::all();
-        return view(
+        $categories = Category::select('id', 'name')->get();
+        $priorities = Priority::select('id', 'name')->get();
+        $localidades = Localidad::select('id', 'nombre')->get(); // Obtener solo los campos necesarios
+        $users = User::select('id', 'name')->get(); // Obtener solo los campos necesarios
+
+        return response()->view(
             'tickets.create',
             compact('categories', 'priorities', 'users', 'localidades')
         );
@@ -95,7 +96,7 @@ class TicketController extends Controller
             \Log::error('Error al crear el ticket: ' . $e->getMessage());
 
             // Retornar un mensaje de error al usuario
-            return redirect()->back()->withErrors(['error' => 'Hubo un problema al crear tu ticket. Intenta nuevamente.']);
+            return response(redirect()->back()->withErrors(['error' => 'Hubo un problema al crear tu ticket. Intenta nuevamente.']));
         }
     }
     /**
@@ -110,7 +111,7 @@ class TicketController extends Controller
 
         $ticket->created_at = $ticket->created_at->format('d-m-Y H:i:s');
 
-        return view('tickets.show', compact('ticket'));
+        return response()->view('tickets.show', compact('ticket'));
     }
 
     public function storeComment(Request $request, Ticket $ticket)
@@ -121,7 +122,7 @@ class TicketController extends Controller
         }
         $request->validate(['comment_text' => 'required']);
         $comment = $ticket->comments()->create([
-            'author_name' => $ticket->author_name,
+            'author_name' => $ticket->author->name,
             'author_email' => $ticket->author_email,
             'comment_text' => $request->comment_text,
         ]);
