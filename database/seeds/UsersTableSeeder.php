@@ -9,7 +9,7 @@ class UsersTableSeeder extends Seeder
     {
         $users = [
             [
-               'id' => 1,
+                'id' => 1,
                 'name' => 'HUGO JARAMILLO',
                 'email' => 'ti@load.com.mx',
                 'password' => '$2y$10$UnLIBQB1uZZC1r5msFWTPuZCZsMBUpZINpJ48G5FmMxz6yVGP83rO',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Priority;
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Seeder;
 
 class PrioritiesTableSeeder extends Seeder
@@ -12,15 +13,17 @@ class PrioritiesTableSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker\Factory::create();
+        $faker = FakerFactory::create();
         $priorities = [
-            'BAJA', 'MEDIA', 'ALTA', 'URGENTE'
+            'BAJA',
+            'MEDIA',
+            'ALTA',
+            'URGENTE'
         ];
 
-        foreach($priorities as $priority)
-        {
+        foreach ($priorities as $priority) {
             Priority::create([
-                'name'  => $priority,
+                'name' => $priority,
                 'color' => $faker->hexcolor
             ]);
         }
