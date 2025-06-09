@@ -13,7 +13,7 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable implements CanResetPassword
 {
-    use  Notifiable, HasApiTokens, SoftDeletes;
+    use  Notifiable, HasApiTokens;
 
     public $table = 'users';
 
@@ -75,6 +75,11 @@ class User extends Authenticatable implements CanResetPassword
     public function roles()
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function role()
+    {
+        return $this->roles()->first();
     }
 
     public function isAdmin()
