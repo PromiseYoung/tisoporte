@@ -4,6 +4,7 @@ namespace App\Observers;
 use App\Notifications\AssignedTicketNotification;
 use App\Notifications\DataChangeEmailNotification;
 use App\Ticket;
+use App\User;
 use Illuminate\Support\Facades\Notification;
 
 class TicketActionObserver
@@ -24,7 +25,17 @@ class TicketActionObserver
         ];
 
         // Obtén todos los usuarios con el rol de Admin de manera eficiente
-        $users = \App\User::role('Admin')->get();
+        // Utiliza el método whereHas para filtrar usuarios con el rol de Admin
+        // y luego usa el método get() para obtener la colección de usuarios
+        // Esto evita la carga de relaciones innecesarias y mejora el rendimiento
+        // al reducir la cantidad de consultas a la base de datos.
+        // Además, se asegura de que solo se envíe la notificación si hay usuarios
+        // disponibles para recibirla.
+        // Esto es útil para evitar enviar notificaciones vacías o innecesarias.
+
+        $users = User::whereHas('roles', function ($q) {
+            $q->where('title', 'Admin');
+        })->get();
 
         // Verifica si hay usuarios antes de enviar la notificación
         if ($users->isNotEmpty()) {
