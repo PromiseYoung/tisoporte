@@ -1,60 +1,82 @@
 @extends('layouts.auth')
 
 @section('content')
-    <div class="row justify-content-center align-items-center min-vh-100 bg-light">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-lg border-0 rounded-lg">
-                <div class="card-body p-5">
-                    <h1 class="text-center mb-4 text-primary">{{ trans('panel.site_title') }}</h1>
+    <style>
+        .reset-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #e8f5e9, #a5d6a7);
+            padding: 20px;
+        }
 
-                    <p class="text-muted text-center mb-4">{{ trans('global.reset_password') }}</p>
+        .card-reset {
+            max-width: 480px;
+            width: 100%;
+            border-radius: 12px;
+        }
 
-                    <form method="POST" action="{{ route('password.request') }}">
-                        @csrf
+        .input-field input:focus {
+            border-bottom: 1px solid #00796b !important;
+            box-shadow: 0 1px 0 0 #00796b !important;
+        }
 
-                        <input name="token" value="{{ $token }}" type="hidden">
+        .btn-custom {
+            border-radius: 30px;
+            width: 100%;
+        }
 
-                        <div class="form-group mb-4">
-                            <label for="email" class="form-label">{{ trans('global.login_email') }}</label>
-                            <input id="email" type="email" name="email"
-                                class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" required
-                                autocomplete="email" autofocus placeholder="{{ trans('global.login_email') }}"
-                                value="{{ $email ?? old('email') }}">
+        .icon-prefix {
+            color: #4db6ac;
+        }
+    </style>
 
-                            @if ($errors->has('email'))
-                                <div class="invalid-feedback">
-                                    {{ $errors->first('email') }}
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label for="password" class="form-label">{{ trans('global.login_password') }}</label>
-                            <input id="password" type="password" name="password"
-                                class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" required
-                                placeholder="{{ trans('global.login_password') }}">
-
-                            @if ($errors->has('password'))
-                                <div class="invalid-feedback">
-                                    {{ $errors->first('password') }}
-                                </div>
-                            @endif
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label for="password-confirm"
-                                class="form-label">{{ trans('global.login_password_confirmation') }}</label>
-                            <input id="password-confirm" type="password" name="password_confirmation" class="form-control"
-                                required placeholder="{{ trans('global.login_password_confirmation') }}">
-                        </div>
-
-                        <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                {{ trans('global.reset_password') }}
-                            </button>
-                        </div>
-                    </form>
+    <div class="reset-container">
+        <div class="card white card-reset z-depth-3">
+            <div class="card-content">
+                <div class="center-align mb-3">
+                    <h5 class="teal-text text-darken-2">{{ trans('panel.site_title') }}</h5>
+                    <p class="grey-text text-darken-1">{{ trans('global.reset_password') }}</p>
                 </div>
+
+                <form method="POST" action="{{ route('password.request') }}">
+                    @csrf
+                    <input type="hidden" name="token" value="{{ $token }}">
+
+                    <div class="input-field">
+                        <i class="material-icons prefix icon-prefix">email</i>
+                        <input id="email" type="email" name="email"
+                            class="{{ $errors->has('email') ? 'invalid' : '' }}" required
+                            value="{{ $email ?? old('email') }}">
+                        <label for="email">{{ trans('global.login_email') }}</label>
+                        @if ($errors->has('email'))
+                            <span class="helper-text red-text">{{ $errors->first('email') }}</span>
+                        @endif
+                    </div>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix icon-prefix">lock</i>
+                        <input id="password" type="password" name="password"
+                            class="{{ $errors->has('password') ? 'invalid' : '' }}" required>
+                        <label for="password">{{ trans('global.login_password') }}</label>
+                        @if ($errors->has('password'))
+                            <span class="helper-text red-text">{{ $errors->first('password') }}</span>
+                        @endif
+                    </div>
+
+                    <div class="input-field">
+                        <i class="material-icons prefix icon-prefix">lock_outline</i>
+                        <input id="password-confirm" type="password" name="password_confirmation" required>
+                        <label for="password-confirm">{{ trans('global.login_password_confirmation') }}</label>
+                    </div>
+
+                    <div class="center-align mt-4">
+                        <button type="submit" class="btn teal darken-2 btn-custom waves-effect waves-light">
+                            {{ trans('global.reset_password') }}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
