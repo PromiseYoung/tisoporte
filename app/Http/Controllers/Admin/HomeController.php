@@ -21,7 +21,7 @@ class HomeController
         abort_if(Gate::denies('dashboard_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         // Obtener KPIs generales
-        $kpis = $this->getKPIs();
+        $kpisCards = $this->getKPIs();
 
         // Obtener datos para la gráfica de líneas
         $analystsData = $this->getLineChartData();
@@ -30,15 +30,15 @@ class HomeController
         $pieAndTableData = $this->getPieAndTableData($request);
 
         // KPI de porcentaje de tickets cerrados
-        $closedPercentage = $this->calculateClosedPercentage($kpis);
+        $closedPercentage = $this->calculateClosedPercentage($kpisCards);
 
         $analystsList = User::whereHas('tickets')->get();
 
         // Pasar los datos a la vista
         return view('home', [
-            'totalTickets' => $kpis['totalTickets'],
-            'openTickets' => $kpis['openTickets'],
-            'closedTickets' => $kpis['closedTickets'],
+            'totalTickets' => $kpisCards['totalTickets'],
+            'openTickets' => $kpisCards['openTickets'],
+            'closedTickets' => $kpisCards['closedTickets'],
             'closedPercentage' => $closedPercentage,
             'categories' => $pieAndTableData['categories'],
             'data' => $pieAndTableData['data'],
@@ -74,10 +74,10 @@ class HomeController
     /**
      * Calcular el porcentaje de tickets cerrados
      */
-    private function calculateClosedPercentage($kpis)
+    private function calculateClosedPercentage($kpisCards)
     {
-        return $kpis['totalTickets'] > 0
-            ? number_format(($kpis['closedTickets'] / $kpis['totalTickets']) * 100, 2)
+        return $kpisCards['totalTickets'] > 0
+            ? number_format(($kpisCards['closedTickets'] / $kpisCards['totalTickets']) * 100, 2)
             : 0;
     }
     /**

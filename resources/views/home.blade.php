@@ -7,41 +7,54 @@
             <!-- TÍTULO PRINCIPAL -->
             <div class="row mb-4">
                 <div class="col-12">
-                    <h3 class="text-center text-success fw-bold">Dashboard - Desempeño de Soportes y KPIs</h3>
+                    <h3 class="text-center text-success fw-bold">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard - Desempeño de Soportes y KPIs
+                    </h3>
                 </div>
             </div>
 
             <!-- KPIs -->
             <div class="row mb-4">
-                @php
-                    $kpiCards = [
-                        ['title' => 'Total Tickets', 'value' => $totalTickets, 'class' => 'bg-primary'],
-                        ['title' => 'Tickets Abiertos', 'value' => $openTickets, 'class' => 'bg-success'],
-                        ['title' => 'Tickets Cerrados', 'value' => $closedTickets, 'class' => 'bg-danger'],
-                        [
-                            'title' => 'Porcentaje de Tickets Cerrados',
-                            'value' => number_format($closedPercentage, 1) . '%',
-                            'class' => 'bg-warning',
-                        ],
-                    ];
-                @endphp
-                @foreach ($kpiCards as $card)
-                    <div class="col-sm-6 col-md-3 mb-4">
-                        <div class="card text-white shadow-lg rounded {{ $card['class'] }}">
-                            <div class="card-body text-center">
-                                <h3 class="display-4">{{ $card['value'] }}</h3>
-                                <p>{{ $card['title'] }}</p>
-                            </div>
+                <div class="col-sm-6 col-md-3 mb-4">
+                    <div class="card bg-primary text-white shadow-sm rounded">
+                        <div class="card-body text-center">
+                            <h3 class="display-4">{{ $totalTickets }}</h3>
+                            <p class="mb-0">Total Tickets</p>
                         </div>
                     </div>
-                @endforeach
+                </div>
+                <div class="col-sm-6 col-md-3 mb-4">
+                    <div class="card bg-success text-white shadow-sm rounded">
+                        <div class="card-body text-center">
+                            <h3 class="display-4">{{ $openTickets }}</h3>
+                            <p class="mb-0">Tickets Abiertos</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 mb-4">
+                    <div class="card bg-danger text-white shadow-sm rounded">
+                        <div class="card-body text-center">
+                            <h3 class="display-4">{{ $closedTickets }}</h3>
+                            <p class="mb-0">Tickets Cerrados</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 mb-4">
+                    <div class="card bg-warning text-dark shadow-sm rounded">
+                        <div class="card-body text-center">
+                            <h3 class="display-4">{{ number_format($closedPercentage, 1) }}%</h3>
+                            <p class="mb-0">Porcentaje Cerrados</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <!-- GRÁFICO DE PIE -->
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="card shadow-sm rounded">
                         <div class="card-header text-center">
-                            <h5>Gráfica de Soportes Realizados por Categoría</h5>
+                            <h5><i class="fas fa-chart-pie me-2"></i>Soportes por Categoría</h5>
                         </div>
                         <div class="card-body">
                             <canvas id="pieChart"></canvas>
@@ -55,12 +68,13 @@
                 <div class="col-12">
                     <div class="card shadow-sm rounded">
                         <div class="card-header text-center">
-                            <h5>Total de Soportes Realizados por Analista</h5>
-                            <form method="GET" action="{{ route('admin.home') }}" class="form-inline">
-                                <div class="form-group mr-2">
-                                    <label for="analyst_id" class="mr-2">Filtrar por Analista:</label>
+                            <h5><i class="fas fa-users me-2"></i>Soportes por Analista</h5>
+                            <form method="GET" action="{{ route('admin.home') }}"
+                                class="form-inline d-flex flex-wrap justify-content-center">
+                                <div class="form-group m-2">
+                                    <label for="analyst_id" class="mr-2">Analista:</label>
                                     <select name="analyst_id" id="analyst_id" class="form-control">
-                                        <option value="">Seleccione un Analista</option>
+                                        <option value="">Seleccione</option>
                                         @foreach ($analystsList as $analyst)
                                             <option value="{{ $analyst->id }}"
                                                 {{ request('analyst_id') == $analyst->id ? 'selected' : '' }}>
@@ -70,59 +84,62 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group mr-2">
-                                    <label for="start_date" class="mr-2">Fecha de Inicio:</label>
+                                <div class="form-group m-2">
+                                    <label for="start_date" class="mr-2">Inicio:</label>
                                     <input type="date" name="start_date" class="form-control"
                                         value="{{ request('start_date', $startDate) }}">
                                 </div>
 
-                                <div class="form-group mr-2">
-                                    <label for="end_date" class="mr-2">Fecha de Fin:</label>
+                                <div class="form-group m-2">
+                                    <label for="end_date" class="mr-2">Fin:</label>
                                     <input type="date" name="end_date" class="form-control"
                                         value="{{ request('end_date', $endDate) }}">
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Filtrar</button>
+                                <div class="form-group m-2">
+                                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                                </div>
                             </form>
                         </div>
                         <div class="card-body">
-                            <table class="table table-striped table-bordered">
-                                <thead class="table-success">
-                                    <tr>
-                                        <th>Analista</th>
-                                        <th>Categoría</th>
-                                        <th>Total de Soportes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($categoriesByAnalyst as $item)
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered">
+                                    <thead class="table-success">
                                         <tr>
-                                            <td>{{ $item['analyst'] }}</td>
-                                            <td class="text-center">{{ $item['category'] }}</td>
-                                            <td class="text-center">{{ $item['count'] }} Soportes</td>
+                                            <th>Analista</th>
+                                            <th>Categoría</th>
+                                            <th>Total</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot class="table-success">
-                                    <tr>
-                                        <th colspan="2" class="text-right">Total de Soportes:</th>
-                                        <th class="text-center">
-                                            {{ array_sum(array_column($categoriesByAnalyst, 'count')) }} Soportes</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($categoriesByAnalyst as $item)
+                                            <tr>
+                                                <td>{{ $item['analyst'] }}</td>
+                                                <td class="text-center">{{ $item['category'] }}</td>
+                                                <td class="text-center">{{ $item['count'] }} Soportes</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot class="table-success">
+                                        <tr>
+                                            <th colspan="2" class="text-right">Total:</th>
+                                            <th class="text-center">
+                                                {{ array_sum(array_column($categoriesByAnalyst, 'count')) }} Soportes</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
 
             <!-- GRÁFICO DE GAUGE -->
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="card shadow-sm rounded">
                         <div class="card-header text-center">
-                            <h5>Porcentaje de Tickets Cerrados</h5>
+                            <h5><i class="fas fa-tachometer-alt me-2"></i>Porcentaje de Tickets Cerrados</h5>
                         </div>
                         <div class="card-body">
                             <canvas id="gaugeChart"></canvas>
@@ -130,11 +147,13 @@
                     </div>
                 </div>
             </div>
+
+            <!-- GRÁFICO DE LÍNEAS -->
             <div class="row mb-4">
                 <div class="col-12 col-md-8 mx-auto">
                     <div class="card shadow-lg rounded">
                         <div class="card-header text-center">
-                            <h5 class="font-weight-bold">Gráfico Lineal - Soportes por Mes</h5>
+                            <h5 class="font-weight-bold"><i class="fas fa-chart-line me-2"></i>Soportes por Mes</h5>
                         </div>
                         <div class="card-body">
                             <canvas id="lineChart"></canvas>
@@ -142,6 +161,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection
@@ -154,42 +174,51 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // == GLOBAL DATA (from Laravel) ==
+        const labels = {!! json_encode($categories) !!};
+        const data = Array.isArray({!! json_encode($data) !!}) ? {!! json_encode($data) !!} : [];
+        const analysts = {!! json_encode($analysts) !!};
+        const closedPercentage = {{ $closedPercentage ?? 0 }};
+        const analystsData = {!! json_encode($analystsData) !!};
+        const total = data.reduce((acc, curr) => acc + curr, 0);
+        const percentages = data.map(val => ((val / total) * 100).toFixed(1));
 
+        // == UTILS ==
+        function shadeColor(color, percent) {
+            if (!/^#[0-9A-F]{6}$/i.test(color)) return color;
+            let f = parseInt(color.slice(1), 16),
+                t = percent < 0 ? 0 : 255,
+                p = Math.abs(percent),
+                R = f >> 16,
+                G = f >> 8 & 0x00FF,
+                B = f & 0x0000FF;
+            return "#" + (
+                0x1000000 +
+                (Math.round((t - R) * p) + R) * 0x10000 +
+                (Math.round((t - G) * p) + G) * 0x100 +
+                (Math.round((t - B) * p) + B)
+            ).toString(16).slice(1);
+        }
 
-            // === CONFIGURACIÓN GENERAL ===
-            Chart.defaults.font = {
-                size: 16,
-                family: "'Poppins', 'Roboto', sans-serif",
-                weight: '500',
-                lineHeight: 1.4
-            };
-            Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(255, 255, 255, 0.9)'; // Blanco suave
-            Chart.defaults.plugins.tooltip.titleColor = '#546e7a'; // Gris azulado
-            Chart.defaults.plugins.tooltip.bodyColor = '#455a64'; // Azul grisáceo
-            Chart.defaults.plugins.legend.labels.color = '#78909c'; // Gris pastel
+        function generateColors(count) {
+            const base = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'];
+            return Array.from({
+                length: count
+            }, (_, i) => base[i % base.length]);
+        }
 
-            // === DATOS DINÁMICOS DESDE BACKEND ===
-            var labels = {!! json_encode($categories) !!};
-            var data = {!! json_encode($data) !!};
-            var analysts = {!! json_encode($analysts) !!};
-            var total = data.reduce((acc, curr) => acc + curr, 0);
-            var percentages = data.map(function(value) {
-                return ((value / total) * 100).toFixed(1);
-            });
+        // == PIE CHART ==
+        function renderPieChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const colors = generateColors(data.length);
+            const hoverColors = colors.map(c => shadeColor(c, -0.1));
 
-            // === COLORES DINÁMICOS ===
-            var colors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'];
-            var hoverColors = colors.map(color => shadeColor(color, -10));
-
-            // === GRÁFICO DE PIE ===
-            var ctxPie = document.getElementById('pieChart').getContext('2d');
-            new Chart(ctxPie, {
+            new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: labels,
+                    labels,
                     datasets: [{
-                        data: data,
+                        data,
                         backgroundColor: colors,
                         hoverBackgroundColor: hoverColors,
                         borderColor: '#fff',
@@ -203,38 +232,32 @@
                         legend: {
                             position: 'bottom',
                             labels: {
-                                padding: 20
+                                padding: 20,
+                                color: '#78909c'
                             }
                         },
                         tooltip: {
+                            backgroundColor: 'rgba(255,255,255,0.9)',
+                            titleColor: '#546e7a',
+                            bodyColor: '#455a64',
                             callbacks: {
-                                label: function(context) {
-                                    if (!context.dataIndex) return '';
-                                    var index = context.dataIndex;
-                                    var label = context.label || '';
-                                    var value = context.raw || 0;
-                                    var percentage = percentages[index] || 0;
-                                    var analyst = analysts[index] || 'Por Asignar';
-                                    return `${label}: ${percentage}% (${value} tickets) | Analista TI: ${analyst}`;
-                                }
+                                label: ctx =>
+                                    `${ctx.label}: ${percentages[ctx.dataIndex]}% (${ctx.raw} tickets) | Analista: ${analysts[ctx.dataIndex] ?? 'Por Asignar'}`
                             }
                         },
                         datalabels: {
-                            color: '#fff', // Color del texto
-                            backgroundColor: 'rgba(0, 0, 0, 0.7)', // Fondo semi-transparente para mejor contraste
-                            borderRadius: 6, // Bordes redondeados
-                            padding: 8, // Espacio alrededor del texto
-                            align: 'end', // Alinear las etiquetas al final de la barra/punto
-                            anchor: 'end', // Fijar la etiqueta en la punta del elemento
+                            color: '#fff',
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            borderRadius: 6,
+                            padding: 8,
+                            align: 'end',
+                            anchor: 'end',
                             font: {
                                 weight: 'bold',
                                 size: 14,
-                                family: "'Poppins', sans-serif" // Tipografía más moderna y profesional
+                                family: "'Poppins', sans-serif"
                             },
-                            formatter: function(value, context) {
-                                var percentage = percentages[context.dataIndex];
-                                return percentage + '% (' + value + ')'; // Mostrar % y valor real
-                            }
+                            formatter: (val, ctx) => `${percentages[ctx.dataIndex]}% (${val})`
                         }
                     },
                     animation: {
@@ -245,120 +268,98 @@
                     }
                 }
             });
-            // === GRÁFICO GAUGE PARA TICKETS CERRADOS ===
-            var ctxGauge = document.getElementById('gaugeChart').getContext('2d');
-            new Chart(ctxGauge, {
+        }
+
+        // == GAUGE CHART ==
+        function renderGaugeChart() {
+            const ctx = document.getElementById('gaugeChart').getContext('2d');
+
+            new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Cerrados', 'Pendientes'],
                     datasets: [{
-                        data: [{{ $closedPercentage ?? 0 }}, 100 - {{ $closedPercentage ?? 0 }}],
+                        data: [closedPercentage, 100 - closedPercentage],
                         backgroundColor: ['#36b9cc', '#e74a3b'],
-                        borderWidth: 3, // Aumentar el grosor del borde
-                        borderColor: '#fff', // Color de borde blanco para mejorar el contraste
+                        borderWidth: 3,
+                        borderColor: '#fff'
                     }]
                 },
                 options: {
-                    rotation: Math.PI, // Para mostrar la gráfica a la mitad de la circunferencia
-                    circumference: Math.PI, // Mostrar solo la mitad
+                    rotation: Math.PI,
+                    circumference: Math.PI,
+                    cutout: '70%',
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%', // Dejar un centro vacío más grande para mostrar el porcentaje
                     plugins: {
                         legend: {
                             display: true,
                             position: 'bottom',
                             labels: {
                                 font: {
-                                    size: 14, // Aumentar el tamaño de la fuente en la leyenda
-                                    weight: 'bold' // Hacer la fuente en negrita
+                                    size: 14,
+                                    weight: 'bold'
                                 },
                                 padding: 20
                             }
                         },
                         tooltip: {
-                            enabled: false // Desactivar el tooltip por defecto
-                        }
-                    },
-                    animation: {
-                        animateRotate: true,
-                        duration: 1000, // Duración de la animación
-                        easing: 'easeOutQuart' // Efecto de suavizado
-                    },
-                    // Usar el método afterDatasetsDraw para dibujar texto
-                    plugins: {
-                        afterDatasetsDraw: function(chart) {
-                            var ctx = chart.ctx;
-                            var centerX = chart.chartArea.left + (chart.chartArea.right - chart
-                                .chartArea.left) / 2;
-                            var centerY = chart.chartArea.top + (chart.chartArea.bottom - chart
-                                .chartArea.top) / 2;
-
+                            enabled: false
+                        },
+                        afterDatasetsDraw: chart => {
+                            const ctx = chart.ctx;
+                            const {
+                                left,
+                                right,
+                                top,
+                                bottom
+                            } = chart.chartArea;
+                            const centerX = left + (right - left) / 2;
+                            const centerY = top + (bottom - top) / 2;
                             ctx.save();
                             ctx.font = 'bold 20px Arial';
                             ctx.fillStyle = '#333';
                             ctx.textAlign = 'center';
                             ctx.textBaseline = 'middle';
-                            ctx.fillText('{{ $closedPercentage ?? 0 }}%', centerX, centerY);
+                            ctx.fillText(`${closedPercentage}%`, centerX, centerY);
                             ctx.restore();
                         }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        duration: 1000,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
-            // === FUNCIÓN PARA AJUSTAR EL BRILLO DE LOS COLORES ===
-            function shadeColor(color, percent) {
-                if (!/^#[0-9A-F]{6}$/i.test(color)) return color; // Si no es un color válido, devolver sin cambios
-                var f = parseInt(color.slice(1), 16),
-                    t = percent < 0 ? 0 : 255,
-                    p = percent < 0 ? percent * -1 : percent,
-                    R = f >> 16,
-                    G = f >> 8 & 0x00FF,
-                    B = f & 0x0000FF;
-                return "#" + (
-                    0x1000000 +
-                    (Math.round((t - R) * p) + R) * 0x10000 +
-                    (Math.round((t - G) * p) + G) * 0x100 +
-                    (Math.round((t - B) * p) + B)
-                ).toString(16).slice(1);
-            }
+        }
 
-            var ctxLine = document.getElementById('lineChart').getContext('2d');
-
-            // Datos de meses
-            var months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre',
+        // == LINE CHART ==
+        function renderLineChart() {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre',
                 'Octubre', 'Noviembre', 'Diciembre'
             ];
+            const lineColors = generateColors(analystsData.length);
 
-            // Datos dinámicos desde el backend
-            var analystsData = {!! json_encode($analystsData) !!};
+            const datasets = analystsData.map((a, i) => ({
+                label: a.name,
+                data: a.data,
+                borderColor: lineColors[i],
+                backgroundColor: lineColors[i] + '33',
+                borderWidth: 3,
+                tension: 0.6,
+                fill: true,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                cubicInterpolationMode: 'monotone'
+            }));
 
-            // Paleta de colores mejorada
-            var lineColors = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#6c757d'];
-
-            // Crear los datasets para cada analista
-            var datasets = analystsData.map((analyst, index) => {
-                return {
-                    label: analyst.name,
-                    data: analyst.data,
-                    borderColor: lineColors[index % lineColors.length],
-                    backgroundColor: lineColors[index % lineColors.length] +
-                        '33', // Color con transparencia
-                    borderWidth: 3,
-                    borderCapStyle: 'round', // Añadir un borde redondeado a las líneas
-                    tension: 0.6, // Suaviza las líneas
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    fill: true,
-                    cubicInterpolationMode: 'monotone', // Mejora la suavidad en las curvas
-                };
-            });
-
-            // Configurar el gráfico de líneas
-            new Chart(ctxLine, {
+            new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: months,
-                    datasets: datasets
+                    datasets
                 },
                 options: {
                     responsive: true,
@@ -376,15 +377,23 @@
                             }
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            backgroundColor: 'rgba(0,0,0,0.8)',
                             titleColor: '#fff',
                             bodyColor: '#fff',
                             borderWidth: 1,
                             borderColor: '#333',
                             padding: 10,
                             cornerRadius: 4,
-                            displayColors: false // Desactivar los colores de los cuadros en el tooltip
+                            displayColors: false
                         }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutQuart'
                     },
                     scales: {
                         y: {
@@ -419,17 +428,22 @@
                                 }
                             }
                         }
-                    },
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    animation: {
-                        duration: 1200,
-                        easing: 'easeOutQuart'
                     }
                 }
             });
+        }
+
+        // == INIT ==
+        document.addEventListener('DOMContentLoaded', function() {
+            Chart.defaults.font = {
+                size: 16,
+                family: "'Poppins', 'Roboto', sans-serif",
+                weight: '500',
+                lineHeight: 1.4
+            };
+            renderPieChart();
+            renderGaugeChart();
+            renderLineChart();
         });
     </script>
 @endsection
