@@ -88,7 +88,7 @@ class TicketController extends Controller
             DB::commit(); // Si todo va bien, confirma la transacción
 
             // Retornar la respuesta de éxito
-            return redirect()->back()->withStatus('Tu ticket ha sido enviado, nos pondremos en contacto contigo. Puedes ver el estado del ticket <a href="' . route('tickets.show', $ticket->id) . '">Clic</a>');
+            return redirect()->back()->withStatus('Tu ticket ha sido enviado, nos pondremos en contacto contigo. Puedes ver el estado del ticket <a href="' . route('tickets.show', $ticket->id) . '">Ver Ticket</a>');
         } catch (\Exception $e) {
             DB::rollBack(); // Si algo falla, revierte la transacción
 
@@ -116,17 +116,40 @@ class TicketController extends Controller
 
     public function storeComment(Request $request, Ticket $ticket)
     {
-        // Verificar si el ticket está cerrado
+        // Validar el texto del comentario
+        $request->validate([
+            'comment_text' => 'required',
+        ]);
+
+        // Verificar si el ticket está cerrado y cuánto tiempo ha pasado
         if ($ticket->status->name === 'CERRADO') {
-            return redirect()->back()->withErrors(['error' => 'No puedes agregar comentarios a un ticket cerrado.']);
+            $closedAt = $ticket->updated_at ?? now(); // asumiendo que se cierra con update
+            $hoursSinceClosed = now()->diffInHours($closedAt);
+
+            if ($hoursSinceClosed > 12) {
+                return redirect()->back()->withErrors([
+                    'error' => 'Ya no puedes agregar comentarios. Han pasado más de 12 horas desde el cierre del ticket.',
+                ]);
+            }
+
+            return redirect()->back()->withErrors([
+                'error' => 'Este ticket ha sido cerrado. Si necesitas más ayuda, por favor crea uno nuevo.',
+            ]);
         }
-        $request->validate(['comment_text' => 'required']);
+
+        // Crear el comentario asociado al ticket
         $comment = $ticket->comments()->create([
-            'author_name' => $ticket->author->name,
-            'author_email' => $ticket->author_email,
+            'author_name' => $ticket->author->name ?? $ticket->author_name,
+            'author_email' => $ticket->author_email ?? $ticket->author->email,
             'comment_text' => $request->comment_text,
         ]);
+
+        // Enviar notificación al autor del ticket
         $ticket->sendCommentNotification($comment);
-        return redirect()->back()->withStatus('Comentario agregado, el administrador observará el seguimiento de tu soporte. Gracias por tu comprensión.');
+
+        return redirect()->back()->withStatus(
+            'Comentario enviado con éxito. En breve serás atendido por el analista asignado.'
+        );
     }
+
 }
