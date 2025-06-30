@@ -54,12 +54,21 @@ class HomeController
     /**
      * Obtener KPIs generales
      */
-    private function getKPIs()
+    /**
+     * Obtener los indicadores clave de rendimiento (KPIs) para los tickets.
+     *
+     * @return array
+     */
+    private function getKPIs(): array
     {
+        $open = $this->getTicketsByStatus('ABIERTO');
+        $closed = $this->getTicketsByStatus('CERRADO');
+        $total = $open + $closed;
+
         return [
-            'totalTickets' => Ticket::withoutGlobalScopes()->count(),
-            'openTickets' => $this->getTicketsByStatus('ABIERTO'),
-            'closedTickets' => $this->getTicketsByStatus('CERRADO'),
+            'totalTickets' => $total,
+            'openTickets' => $open,
+            'closedTickets' => $closed,
         ];
     }
 
@@ -129,7 +138,6 @@ class HomeController
         return array_map(fn($m) => $monthlyTickets[$m] ?? 0, range(1, 12));
     }
 
-
     /**
      * Obtener datos para la gráfica de pie y tabla (Tickets por Categoría y Analista)
      */
@@ -168,40 +176,41 @@ class HomeController
      */
     private function formatPieAndTableData($ticketData, $startDate, $endDate)
     {
-        $categories = [];
-        $data = [];
-        $analysts = [];
+        $categoryTotals = [];
         $categoriesByAnalyst = [];
-
         foreach ($ticketData as $ticket) {
-            $categories[$ticket->category->name] = ($categories[$ticket->category->name] ?? 0) + $ticket->total;
-            $data[] = $ticket->total;
-            $analysts[$ticket->assigned_to_user->name ?? 'Sin Asignar'] = ($analysts[$ticket->assigned_to_user->name ?? 'Sin Asignar'] ?? 0) + $ticket->total;
+            $category = $ticket->category->name;
+            $analyst = $ticket->assigned_to_user->name ?? 'Sin Asignar';
+
+            // Sumar totales por categoría
+            $categoryTotals[$category] = ($categoryTotals[$category] ?? 0) + $ticket->total;
+
+            // Guardar el analista principal (el primero que aparece)
+            if (!isset($categoryAnalyst[$category])) {
+                $categoryAnalyst[$category] = $analyst;
+            }
 
             $categoriesByAnalyst[] = [
-                'analyst' => $ticket->assigned_to_user->name ?? 'Sin Asignar',
-                'category' => $ticket->category->name,
+                'analyst' => $analyst,
+                'category' => $category,
                 'count' => $ticket->total,
             ];
         }
-
         return [
-            'categories' => array_keys($categories),
-            'data' => array_values($categories),
-            'analysts' => array_keys($analysts),
+            'categories' => array_keys($categoryTotals),
+            'data' => array_values($categoryTotals),
+            'analysts' => array_values($categoryAnalyst),
             'categoriesByAnalyst' => $categoriesByAnalyst,
             'startDate' => $startDate,
             'endDate' => $endDate,
         ];
     }
-
     /**
      * Mostrar el listado de analistas
      */
     public function showPieAndTableData(Request $request)
     {
         $analystsList = User::whereHas('tickets')->get();
-
         $data = $this->getPieAndTableData($request);
 
         return view('home', [
@@ -211,4 +220,5 @@ class HomeController
             'endDate' => $data['endDate'],
         ]);
     }
+
 }
