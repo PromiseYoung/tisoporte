@@ -254,10 +254,16 @@
                             anchor: 'end',
                             font: {
                                 weight: 'bold',
-                                size: 14,
-                                family: "'Poppins', sans-serif"
+                                size: 16,
+                                family: "'Poppins', 'Roboto', sans-serif",
+                                lineHeight: 1.4
                             },
-                            formatter: (val, ctx) => `${percentages[ctx.dataIndex]}% (${val})`
+                            formatter: (val, ctx) => {
+                                const p = percentages[ctx.dataIndex];
+                                const unit = val === 1 ? 'ticket' : 'tickets';
+                                return `${p}% (${val} ${unit})`;
+                            }
+
                         }
                     },
                     animation: {
@@ -273,6 +279,32 @@
         // == GAUGE CHART ==
         function renderGaugeChart() {
             const ctx = document.getElementById('gaugeChart').getContext('2d');
+
+            // Plugin personalizado para mostrar el porcentaje al centro
+            const gaugeLabel = {
+                id: 'gaugeLabel',
+                afterDraw(chart) {
+                    const {
+                        ctx,
+                        chartArea: {
+                            left,
+                            right,
+                            top,
+                            bottom
+                        }
+                    } = chart;
+                    const centerX = left + (right - left) / 2;
+                    const centerY = top + (bottom - top) / 2;
+
+                    ctx.save();
+                    ctx.font = 'bold 24px Poppins, sans-serif';
+                    ctx.fillStyle = '#333';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${closedPercentage}%`, centerX, centerY);
+                    ctx.restore();
+                }
+            };
 
             new Chart(ctx, {
                 type: 'doughnut',
@@ -305,24 +337,6 @@
                         },
                         tooltip: {
                             enabled: false
-                        },
-                        afterDatasetsDraw: chart => {
-                            const ctx = chart.ctx;
-                            const {
-                                left,
-                                right,
-                                top,
-                                bottom
-                            } = chart.chartArea;
-                            const centerX = left + (right - left) / 2;
-                            const centerY = top + (bottom - top) / 2;
-                            ctx.save();
-                            ctx.font = 'bold 20px Arial';
-                            ctx.fillStyle = '#333';
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            ctx.fillText(`${closedPercentage}%`, centerX, centerY);
-                            ctx.restore();
                         }
                     },
                     animation: {
@@ -330,23 +344,26 @@
                         duration: 1000,
                         easing: 'easeOutQuart'
                     }
-                }
+                },
+                plugins: [gaugeLabel] // Activamos el plugin personalizado
             });
         }
 
         // == LINE CHART ==
         function renderLineChart() {
             const ctx = document.getElementById('lineChart').getContext('2d');
-            const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre',
-                'Octubre', 'Noviembre', 'Diciembre'
+            const months = [
+                'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
             ];
+
             const lineColors = generateColors(analystsData.length);
 
-            const datasets = analystsData.map((a, i) => ({
-                label: a.name,
-                data: a.data,
-                borderColor: lineColors[i],
-                backgroundColor: lineColors[i] + '33',
+            const datasets = analystsData.map((analyst, index) => ({
+                label: analyst.name,
+                data: analyst.data,
+                borderColor: lineColors[index],
+                backgroundColor: lineColors[index] + '33', // Añade opacidad
                 borderWidth: 3,
                 tension: 0.6,
                 fill: true,
@@ -392,7 +409,7 @@
                         intersect: false
                     },
                     animation: {
-                        duration: 1200,
+                        duration: 1600,
                         easing: 'easeOutQuart'
                     },
                     scales: {
@@ -402,14 +419,14 @@
                                 display: true,
                                 text: 'Cantidad de Soportes',
                                 font: {
-                                    size: 16
+                                    size: 14
                                 }
                             },
                             ticks: {
                                 stepSize: 5,
                                 color: '#444',
                                 font: {
-                                    size: 12
+                                    size: 14
                                 }
                             }
                         },
@@ -418,13 +435,13 @@
                                 display: true,
                                 text: 'Meses',
                                 font: {
-                                    size: 16
+                                    size: 14
                                 }
                             },
                             ticks: {
                                 color: '#444',
                                 font: {
-                                    size: 12
+                                    size: 14
                                 }
                             }
                         }
