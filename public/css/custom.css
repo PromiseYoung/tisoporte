@@ -173,6 +173,7 @@ body.dark-mode header,
 body.dark-mode a,
 body.dark-mode th,
 body.dark-mode tr,
+body.dark-mode ul,
 body.dark-mode td,
 body.dark-mode pre,
 body.dark-mode label,
@@ -187,7 +188,6 @@ body.dark-mode option {
 body.dark-mode .app-body .card-header,
 body.dark-mode .sidebar,
 body.dark-mode .pastel,
-body.dark-mode .sidebar,
 body.dark-mode .shadow-sm,
 body.dark-mode .row,
 body.dark-mode .nav-item,
@@ -246,7 +246,7 @@ td {
 /* Transición de desvanecimiento */
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.5s ease;
+    transition: opacity 0.9s ease;
 }
 
 .fade-enter,
