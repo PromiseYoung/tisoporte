@@ -112,7 +112,6 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
     <script src="https://unpkg.com/@coreui/coreui@2.1.16/dist/js/coreui.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -132,6 +131,7 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+
     <script src="{{ asset('js/main.js') }}"></script>
 
     <script>
@@ -353,7 +353,6 @@
             const themeToggleButton = document.getElementById('theme-toggle');
             const themeIcon = document.getElementById('theme-icon');
 
-            // Define light and dark mode colors
             const lightModeColors = {
                 background: '#ffffff',
                 text: '#000000',
@@ -363,12 +362,11 @@
 
             const darkModeColors = {
                 background: '#23282c',
-                text: '#1e1e1e',
+                text: '#e0e0e0',
                 buttonBackground: '#23282c',
                 buttonText: '#e0e0e0'
             };
 
-            // Apply colors based on the current mode
             function applyColors(mode) {
                 const colors = mode === 'dark' ? darkModeColors : lightModeColors;
                 document.body.style.backgroundColor = colors.background;
@@ -377,19 +375,28 @@
                 themeToggleButton.style.color = colors.buttonText;
             }
 
-            // Check the user's theme preference from localStorage
+            // Inicializar modo
             const savedTheme = localStorage.getItem('theme') || 'light';
+
+            // Asegura que se aplique la clase correctamente
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+
+            // Aplicar ícono y colores
             themeIcon.classList.toggle('fa-moon', savedTheme === 'dark');
             themeIcon.classList.toggle('fa-sun', savedTheme !== 'dark');
             applyColors(savedTheme);
-            // Event listener for the theme toggle button
+
+            // Botón toggle
             themeToggleButton.addEventListener('click', () => {
                 const isDarkMode = document.body.classList.toggle('dark-mode');
+                const currentMode = isDarkMode ? 'dark' : 'light';
+
                 themeIcon.classList.toggle('fa-moon', isDarkMode);
                 themeIcon.classList.toggle('fa-sun', !isDarkMode);
-
-                // Save the user's theme preference in localStorage
-                const currentMode = isDarkMode ? 'dark' : 'light';
                 localStorage.setItem('theme', currentMode);
                 applyColors(currentMode);
             });
