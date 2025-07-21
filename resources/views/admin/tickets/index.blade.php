@@ -25,7 +25,7 @@
             width: 40px;
             height: 40px;
             border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #007bff;
+            border-left-color: #1dd85b;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 10px;
@@ -39,23 +39,25 @@
     </style>
     @can('ticket_create')
         <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-12 d-flex ">
                 <a class="btn btn-success" href="{{ route('admin.tickets.create') }}">
                     {{ trans('global.add') }} {{ trans('cruds.ticket.title_singular') }}
                 </a>
             </div>
         </div>
     @endcan
-    <div class="card">
-        <div class="card-header">
+    <div class="card rounded-4 bg-white mb-4 border-0 shadow-sm table-responsive-lg table-hover border-success  border-2">
+        <div
+            class="card-header bg-success text-white fw-bold fs-5 d-flex align-items-center rounded-top-4 border-bottom border-success">
             {{ trans('cruds.ticket.title_singular') }} {{ trans('global.list') }}
         </div>
-        <div class="card-body">
+        <div class="card-body p-4 rounded-bottom-4 border-top border-success shadow-sm">
             <div class="table-responsive">
                 <table
-                    class="table table-striped table-hover table-bordered table-sm dt-responsive nowrap ajaxTable datatable datatable-Ticket">
-                    <thead class="bg-primary text-white">
-                        <tr>
+                    class="table table-hover table-striped align-middle shadow-sm rounded dt-responsive nowrap ajaxTable datatable datatable-Ticket">
+
+                    <thead class="bg-success text-white">
+                        <tr class="text-center">
                             <th width="10">
                                 <i class="fas fa-check-square"></i>
                             </th>
@@ -63,7 +65,7 @@
                                 <i class="fas fa-hashtag"></i> {{ trans('cruds.ticket.fields.id') }}
                             </th>
                             <th>
-                                <i class="fas fa-heading"></i> {{ trans('cruds.ticket.fields.title') }}
+                                <i class="fas fa-check-square"></i> {{ trans('cruds.ticket.fields.title') }}
                             </th>
                             <th>
                                 <i class="fas fa-info-circle"></i> {{ trans('cruds.ticket.fields.status') }}
@@ -87,13 +89,10 @@
                                 <i class="fas fa-user-check"></i> {{ trans('cruds.ticket.fields.assigned_to_user') }}
                             </th>
                             <th>
-                                <i class="fas fa-cogs"></i> &nbsp;
+                                <i class="fas fa-cogs"></i> Acciones &nbsp;
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Data will be populated by DataTables -->
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -134,46 +133,62 @@
   </div>
 </form>
 `;
-
             let dtButtons = [];
 
             @can('ticket_delete')
-                let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
                 let deleteButton = {
-                    text: deleteButtonTrans,
+                    text: '{{ trans('global.datatables.delete') }}',
                     url: "{{ route('admin.tickets.massDestroy') }}",
-                    className: 'btn-danger',
+                    className: 'btn-danger btn-sm',
                     action: function(e, dt, node, config) {
-                        var ids = $.map(dt.rows({
-                            selected: true
-                        }).data(), function(entry) {
-                            return entry.id;
-                        });
+                        const ids = getSelectedIds(dt);
 
                         if (ids.length === 0) {
-                            alert('{{ trans('global.datatables.zero_selected') }}');
+                            Swal.fire('Atención', '{{ trans('global.datatables.zero_selected') }}',
+                                'warning');
                             return;
                         }
 
-                        if (confirm('{{ trans('global.areYouSure') }}')) {
-                            $.ajax({
-                                headers: {
-                                    'x-csrf-token': _token
-                                },
-                                method: 'POST',
-                                url: config.url,
-                                data: {
-                                    ids: ids,
-                                    _method: 'DELETE'
-                                }
-                            }).done(function() {
-                                location.reload();
-                            });
-                        }
+                        Swal.fire({
+                            title: '{{ trans('global.areYouSure') }}',
+                            text: "Esta acción no se puede revertir",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Sí, eliminar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                node.prop('disabled', true);
+                                $.ajax({
+                                        headers: {
+                                            'x-csrf-token': _token
+                                        },
+                                        method: 'POST',
+                                        url: config.url,
+                                        data: {
+                                            ids,
+                                            _method: 'DELETE'
+                                        }
+                                    })
+                                    .done(() => {
+                                        Swal.fire('Eliminado',
+                                            'Los registros han sido eliminados.', 'success');
+                                        dt.ajax.reload();
+                                    })
+                                    .always(() => node.prop('disabled', false));
+                            }
+                        });
                     }
                 };
                 dtButtons.push(deleteButton);
             @endcan
+
+            function getSelectedIds(dt) {
+                return $.map(dt.rows({
+                    selected: true
+                }).data(), entry => entry.id);
+            }
 
             let searchParams = new URLSearchParams(window.location.search);
             let dtOverrideGlobals = {
@@ -202,34 +217,42 @@
                         data: 'title',
                         name: 'title',
                         render: function(data, type, row) {
-                            return '<a href="' + row.view_link + '">' + data + ' (' + row
-                                .comments_count + ')</a>';
+                            return '<a href="' + row.view_link +
+                                '" class="fw-semibold text-decoration-none text-primary">' +
+                                data + ' <span class="badge bg-info">' + row.comments_count +
+                                ' <i class="fas fa-comment-dots"></i></span></a>';
                         }
                     },
                     {
                         data: 'status_name',
                         name: 'status.name',
                         render: function(data, type, row) {
-                            return '<span style="color:' + row.status_color + '">' + data + '</span>';
+                            return '<span class="badge rounded-pill text-white" style="background-color:' +
+                                row.status_color + '">' + data + '</span>';
                         }
                     },
                     {
                         data: 'priority_name',
                         name: 'priority.name',
                         render: function(data, type, row) {
-                            return '<span style="color:' + row.priority_color + '">' + data + '</span>';
+                            return '<span class="badge rounded-pill text-white" style="background-color:' +
+                                row
+                                .priority_color +
+                                '; font-size: 12px;"><i class="fas fa-bolt"></i>' + data +
+                                '</span>';
                         }
                     },
                     {
                         data: 'category_name',
                         name: 'category.name',
                         render: function(data, type, row) {
-                            return '<span style="color:' + row.category_color + '">' + data + '</span>';
+                            return '<span class="badge rounded-pill shadow-sm" style="background-color:' +
+                                row.category_color + '; font-size: 12px;">' + data + '</span>';
                         }
                     },
                     {
                         data: 'localidad_nombre',
-                        name: 'localidad_nombre'
+                        name: 'localidad_nombre',
                     },
                     {
                         data: 'author_name',
@@ -241,11 +264,15 @@
                     },
                     {
                         data: 'assigned_to_user_name',
-                        name: 'assigned_to_user.name'
+                        name: 'assigned_to_user.name',
                     },
                     {
                         data: 'actions',
-                        name: '{{ trans('global.actions') }}'
+                        name: 'actions',
+                        className: 'text-center',
+                        orderable: false,
+                        searchable: false
+
                     }
                 ],
                 order: [
@@ -256,7 +283,7 @@
                     $(".dataTables_filter").after(filters);
                 },
                 language: {
-                    processing: '<div class="spinner-container"><div class="spinner"></div><p style="margin-top: 30px;">Cargando datos...</p></div>'
+                    processing: '<div class="spinner-border text-success" role="status" style="width: 4rem; height: 4rem;"><span class="visually-hidden"></span></div><p class="mt-4 fw-semibold fs-5">Cargando datos...</p>'
                 }
             };
 

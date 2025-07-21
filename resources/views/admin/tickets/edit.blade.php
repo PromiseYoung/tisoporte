@@ -18,7 +18,7 @@
                         value="{{ old('title', isset($ticket) ? $ticket->title : '') }}" required>
                     @error('title')
                         <div class="invalid-feedback">
-                            {{ $message }}
+                            {{ $errors->first('author_id') }}
                         </div>
                     @enderror
                     <small class="form-text text-muted">
@@ -31,7 +31,7 @@
                     <textarea id="content" name="content" class="form-control @error('content') is-invalid @enderror">{{ old('content', isset($ticket) ? $ticket->content : '') }}</textarea>
                     @error('content')
                         <div class="invalid-feedback">
-                            {{ $message }}
+                            {{ $errors->first('priority_id') }}
                         </div>
                     @enderror
                     <small class="form-text text-muted">
@@ -126,7 +126,7 @@
                         @foreach ($authors as $id => $author)
                             <option value="{{ $id }}"
                                 {{ old('author_id', isset($ticket) ? $ticket->author_id : '') == $id ? 'selected' : '' }}>
-                                {{ $author['author_name'] ?? $author }}
+                                {{ $author }}
                             </option>
                         @endforeach
                     </select>
@@ -139,7 +139,6 @@
                         {{ trans('cruds.ticket.fields.author_name_helper') }}
                     </small>
                 </div>
-
 
                 <div class="form-group">
                     <label for="author_email">{{ trans('cruds.ticket.fields.author_email') }}</label>

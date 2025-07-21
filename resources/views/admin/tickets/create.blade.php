@@ -101,8 +101,7 @@
                 <div class="form-group">
                     <label for="localidad_id">Localidad</label>
                     <select id="localidad_id" name="localidad_id"
-                        class="form-control form-control-lg select2 @error('localidad_id') is-invalid @enderror rounded-pill"
-                        required>
+                        class="form-control form-control-lg select2 @error('localidad_id') is-invalid @enderror" required>
                         @foreach ($localidad as $id => $nombre)
                             <option value="{{ $id }}"
                                 {{ (old('localidad_id') ?? (isset($ticket) ? $ticket->localidad_id : null)) == $id ? 'selected' : '' }}>
@@ -115,13 +114,27 @@
                     @enderror
                 </div>
 
+                {{-- <div class="form-group {{ $errors->has('author_name') ? 'has-error' : '' }}">
+                    <label for="author_name">{{ trans('cruds.ticket.fields.author_name') }}</label>
+                    <input type="text" id="author_name" name="author_name" class="form-control form-control-lg"
+                        value="{{ old('author_name', isset($ticket) ? $ticket->author_name : '') }}" required>
+                    @if ($errors->has('author_name'))
+                        <div class="invalid-feedback d-block">
+                            {{ $errors->first('author_name') }}
+                        </div>
+                    @endif
+                    <small class="form-text text-muted">
+                        {{ trans('cruds.ticket.fields.author_name_helper') }}
+                    </small>
+                </div> --}}
+
                 <div class="form-group {{ $errors->has('author_id') ? 'has-error' : '' }}">
                     <label for="author_id">{{ trans('cruds.ticket.fields.author_name') }}</label>
                     <select id="author_id" name="author_id" class="form-control form-control-lg select2" required>
                         @foreach ($authors as $id => $author)
                             <option value="{{ $id }}"
-                                {{ old('author_id', isset($ticket) ? $ticket->author_id : '') == $id ? 'selected' : '' }}>
-                                {{ $author['author_name'] ?? $author }}
+                                {{ (string) old('author_id', $ticket->author_id ?? '') === (string) $id ? 'selected' : '' }}>
+                                {{ $author }}
                             </option>
                         @endforeach
                     </select>
