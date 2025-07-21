@@ -33,12 +33,8 @@
 
     .nav-dropdown-items {
         background-color: var(--dropdown-bg);
-        border-left: 3px solid var(--dropdown-border);
+        border-left: 2px solid var(--dropdown-border);
         padding-left: 1rem;
-    }
-
-    .nav-item+.nav-item {
-        margin-top: 0.5rem;
     }
 
     .nav-link i {
@@ -46,10 +42,6 @@
         width: 1.25rem;
         text-align: center;
     }
-
-    /* .sidebar-minimizer {
-        margin-top: 1rem;
-    } */
 </style>
 
 <div class="sidebar bg-primary-subtle shadow-sm">
@@ -133,5 +125,5 @@
             </li>
         </ul>
     </nav>
-    <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+    <button class="sidebar-minimizer brand-minimizer" type="button" title="menu"></button>
 </div>

@@ -87,13 +87,13 @@
                                 <div class="form-group m-2">
                                     <label for="start_date" class="mr-2">Inicio:</label>
                                     <input type="date" name="start_date" class="form-control"
-                                        value="{{ request('start_date', $startDate) }}">
+                                        value="{{ request('start_date', $startDate) }}" title="Fecha de inicio">
                                 </div>
 
                                 <div class="form-group m-2">
                                     <label for="end_date" class="mr-2">Fin:</label>
                                     <input type="date" name="end_date" class="form-control"
-                                        value="{{ request('end_date', $endDate) }}">
+                                        value="{{ request('end_date', $endDate) }}" title="Fecha de fin">
                                 </div>
 
                                 <div class="form-group m-2">
