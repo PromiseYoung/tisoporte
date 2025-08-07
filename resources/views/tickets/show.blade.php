@@ -17,14 +17,16 @@
                     </div>
 
                     <div class="card-body">
-                        <table class="table table-hover table-striped align-middle">
-                            <tbody>
-                                <tr>
-                                    <th>{{ trans('cruds.ticket.fields.created_at') }}</th>
-                                    <td>{{ $ticket->created_at->format('d-m-Y H:i:s') }}</td>
+                        <table class="table table-hover table-borderless align-middle">
+                            <tbody class="table-group-divider">
+                                <tr class="bg-white border-bottom">
+                                    <th scope="row" class="text-muted w-25">{{ trans('cruds.ticket.fields.created_at') }}
+                                    </th>
+                                    <td class="fw-semibold">{{ $ticket->created_at->format('d-m-Y H:i:s') }}</td>
                                 </tr>
-                                <tr>
-                                    <th>{{ trans('cruds.ticket.fields.assigned_to_user') }}</th>
+                                <tr class="bg-white border-bottom">
+                                    <th scope="row" class="text-muted">
+                                        {{ trans('cruds.ticket.fields.assigned_to_user') }}</th>
                                     <td>{{ $ticket->assigned_to_user->name ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
@@ -70,7 +72,9 @@
                                 </tr>
                                 <tr>
                                     <th>{{ trans('cruds.ticket.fields.author_name') }}</th>
-                                    <td>{{ $ticket->author_name ?? ($ticket->author->name ?? 'N/A') }}</td>
+
+                                    {{-- $ticket->author->name --}}
+                                    <td>{{ $ticket->author_name ?? '' }}</td>
                                 </tr>
                                 <tr>
                                     <th>{{ trans('cruds.ticket.fields.author_email') }}</th>
@@ -86,7 +90,7 @@
                                     <p class="mb-1 fw-bold">
                                         <a href="mailto:{{ $comment->author_email }}"
                                             class="text-decoration-none text-dark">
-                                            {{ $comment->authors->name ?? $comment->author_name }}
+                                            {{ $comment->author_name }}
                                         </a>
                                         <span class="text-muted">({{ $comment->created_at->format('d-m-Y H:i') }})</span>
                                     </p>
