@@ -42,6 +42,27 @@
                         {{ trans('cruds.comment.fields.author_name_helper') }}
                     </small>
                 </div>
+                {{-- <div class="form-group {{ $errors->has('author_id') ? 'has-error' : '' }}">
+                    <label for="author_id">{{ trans('cruds.ticket.fields.author_name') }}</label>
+                    <select id="author_id" name="author_id" class="form-control form-control-lg select2" required>
+                        @foreach ($author as $id => $author)
+                            <option value="{{ $id }}"
+                                {{ (string) old('author_id', $ticket->author_id ?? '') === (string) $id ? 'selected' : '' }}>
+                                {{ $author }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @if ($errors->has('author_id'))
+                        <div class="invalid-feedback d-block">
+                            {{ $errors->first('author_id') }}
+                        </div>
+                    @endif
+                    <small class="form-text text-muted">
+                        {{ trans('cruds.ticket.fields.author_name_helper') }}
+                    </small>
+                </div> --}}
+
 
                 <!-- Author Email -->
                 <div class="form-group {{ $errors->has('author_email') ? 'is-invalid' : '' }}">
