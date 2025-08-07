@@ -9,63 +9,65 @@
             </div>
         </div>
     @endcan
-    <div class="card">
-        <div class="card-header">
+    <div class="card rounded-4 bg-white mb-4 border-0 shadow-sm table-responsive-lg table-hover border-success  border-2">
+        <div
+            class="card-header bg-success text-white fw-bold fs-5 d-flex align-items-center rounded-top-4 border-bottom border-success">
             {{ trans('cruds.category.title_singular') }} {{ trans('global.list') }}
         </div>
-        <div class="card-body">
+        <div class="card-body p-4 rounded-bottom-4 border-top border-success shadow-sm">
             <div class="table-responsive">
-                <table class=" table table-bordered table-striped table-hover datatable datatable-Category">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th width="10">
+                <table
+                    class="table table-hover table-striped table-bordered align-middle datatable datatable-Category shadow-sm rounded">
+                    <thead class="table-success text-white">
+                        <tr class="text-center align-middle">
+                            <th scope="col">
+                                <i class="fas fa-check-circle"></i>
                             </th>
-                            <th>
+                            <th scope="col">
                                 {{ trans('cruds.category.fields.id') }}
                             </th>
-                            <th>
+                            <th scope="col">
                                 {{ trans('cruds.category.fields.name') }}
                             </th>
-                            <th>
+                            <th scope="col">
                                 {{ trans('cruds.user.fields.name') }}
                             </th>
-
-                            <th>
+                            <th scope="col">
                                 {{ trans('cruds.category.fields.color') }}
                             </th>
-                            <th>
-                                &nbsp;
+                            <th scope="col">
+                                <i class="fas fa-cogs"></i> {{ __('Acciones') }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($categories as $key => $category)
                             <tr data-entry-id="{{ $category->id }}">
-                                <td>
+                                <td class="text-center">
 
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     {{ $category->id ?? '' }}
                                 </td>
                                 <td>
-                                    {{ $category->name ?? '' }}
+                                    <span class="fw-semibold">{{ $category->name ?? '' }}</span>
                                 </td>
                                 <td>
-                                    {{ $category->users->name ?? '' }}
+                                    <span class="text-muted">{{ $category->users->name ?? '' }}</span>
                                 </td>
-                                <td style="background-color:{{ $category->color ?? '#FFFFFF' }}"></td>
-                                <td>
+                                <td style="background-color:{{ $category->color ?? '#FFFFFF' }}; width: 60px;"></td>
+                                <td class="text-center">
                                     @can('category_show')
-                                        <a class="btn btn-xs btn-primary"
+                                        <a class="btn btn-sm btn-outline-primary"
                                             href="{{ route('admin.categories.show', $category->id) }}">
-                                            {{ trans('global.view') }}
+                                            <i class="fas fa-eye"></i>
                                         </a>
                                     @endcan
 
                                     @can('category_edit')
-                                        <a class="btn btn-xs btn-info"
+                                        <a class="btn btn-sm btn-outline-info"
                                             href="{{ route('admin.categories.edit', $category->id) }}">
-                                            {{ trans('global.edit') }}
+                                            <i class="fas fa-edit"></i>
                                         </a>
                                     @endcan
 
@@ -73,10 +75,11 @@
                                         <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST"
                                             onsubmit="return confirm('{{ trans('global.areYouSure') }}');"
                                             style="display: inline-block;">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="submit" class="btn btn-xs btn-danger"
-                                                value="{{ trans('global.delete') }}">
+                                            @method('DELETE')
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
                                         </form>
                                     @endcan
                                 </td>
@@ -137,8 +140,23 @@
                 pageLength: 100,
             });
             $('.datatable-Category:not(.ajaxTable)').DataTable({
-                buttons: dtButtons
-            })
+                buttons: dtButtons,
+                select: {
+                    style: 'multi+shift',
+                    selector: 'td:first-child'
+                },
+                columnDefs: [{
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 0
+                    },
+                    {
+                        orderable: false,
+                        searchable: false,
+                        targets: -1
+                    }
+                ]
+            });
             $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
                 $($.fn.dataTable.tables(true)).DataTable()
                     .columns.adjust();
