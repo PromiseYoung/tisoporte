@@ -178,6 +178,7 @@ class HomeController
     {
         $categoryTotals = [];
         $categoriesByAnalyst = [];
+        $categoryAnalyst = [];
         foreach ($ticketData as $ticket) {
             $category = $ticket->category->name;
             $analyst = $ticket->assigned_to_user->name ?? 'Sin Asignar';
