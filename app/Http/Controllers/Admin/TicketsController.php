@@ -135,7 +135,7 @@ class TicketsController extends Controller
             $query->whereIn('id', [1, 2]);
         });
 
-        if ($user) {
+        if ($user instanceof \App\User && isset($user->id)) {
             $assigned_to_users_query->orWhere('id', $user->id);
         }
 
@@ -291,7 +291,7 @@ class TicketsController extends Controller
         $user = auth()->user();
         $comment = $ticket->comments()->create([
             'author_name' => $user->author_name ?? $user->name,
-            'author_email' => $user->email ?? $user->author_email,
+            'author_email' => $user->author_email,
             'comment_text' => $request->comment_text,
         ]);
 
