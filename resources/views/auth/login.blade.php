@@ -103,8 +103,7 @@
 
                 <div class="input-field">
                     <i class="material-icons prefix">email</i>
-                    <input id="email" name="email" type="email"
-                        class="{{ $errors->has('email') ? 'invalid' : '' }}"
+                    <input id="email" name="email" type="email" class="{{ $errors->has('email') ? 'invalid' : '' }}"
                         value="{{ old('email') }}" required autofocus>
                     <label for="email">{{ trans('global.login_email') }}</label>
                     @error('email')
@@ -134,8 +133,7 @@
                 </button>
 
                 @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}"
-                        class="grey-text text-darken-1 forgot-password center-align">
+                    <a href="{{ route('password.request') }}" class="grey-text text-darken-1 forgot-password center-align">
                         {{ trans('global.forgot_password') }}
                     </a>
                 @endif
