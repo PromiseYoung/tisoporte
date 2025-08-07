@@ -14,9 +14,12 @@ class CommentEmailNotification extends Notification
     /**
      * The comment instance.
      *
-     * @var object
+     * @var mixed
      */
+
     protected $comment;
+
+    protected $ticket;
 
     /**
      * Create a new notification instance.
@@ -26,6 +29,7 @@ class CommentEmailNotification extends Notification
     public function __construct($comment)
     {
         $this->comment = $comment;
+        $this->ticket = $comment->ticket; // Assuming the comment has a ticket relationship
     }
 
     /**
@@ -48,10 +52,10 @@ class CommentEmailNotification extends Notification
     public function toMail($notifiable)
     {
         // Definición de variables para mayor claridad
-        $ticketTitle = $this->comment->ticket->title;
-        $authorName = $this->comment->ticket->author_name;
+        $ticketTitle = $this->ticket->title;
+        $authorName = $this->comment->ticket->author->name ?? $this->ticket->author_name;
         $commentText = Str::limit($this->comment->comment_text, 50);
-        $ticketId = $this->comment->ticket->id;
+        $ticketId = $this->ticket->id;
 
         // Determinar la ruta del ticket según el tipo de usuario
         $route = $this->getTicketRoute($notifiable, $ticketId);
