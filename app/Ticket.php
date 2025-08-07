@@ -2,16 +2,16 @@
 
 namespace App;
 
-use App\Localidad;
+use App\Notifications\CommentEmailNotification;
 use App\Scopes\AgentScope;
 use App\Traits\Auditable;
-use App\Notifications\CommentEmailNotification;
-use Illuminate\Support\Facades\Notification;
+use App\Localidad;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Notification;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Ticket extends Model implements HasMedia
 {
@@ -45,7 +45,6 @@ class Ticket extends Model implements HasMedia
         'localidad_id',  // Agregar este campo
     ];
 
-
     public static function boot()
     {
         parent::boot();
@@ -55,9 +54,18 @@ class Ticket extends Model implements HasMedia
         static::addGlobalScope(new AgentScope);
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    /**
+     * Register media conversions for the model.
+     *
+     * @param \Spatie\MediaLibrary\MediaCollections\Models\Media|null $media
+     * @return void
+     */
+    public function registerMediaConversions(?Media $media = null): void
     {
-        $this->addMediaConversion('thumb')->width(50)->height(50);
+        $this
+            ->addMediaConversion('thumb')
+            ->width(50)
+            ->height(50);
     }
 
     public function comments()
@@ -97,16 +105,17 @@ class Ticket extends Model implements HasMedia
 
     public function author()
     {
-        return $this->belongsTo(Authors::class, 'author_id');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
     public function scopeFilterTickets($query)
     {
-        $query->when(request()->input('priority'), function ($query) {
-            $query->whereHas('priority', function ($query) {
-                $query->whereId(request()->input('priority'));
-            });
-        })
+        $query
+            ->when(request()->input('priority'), function ($query) {
+                $query->whereHas('priority', function ($query) {
+                    $query->whereId(request()->input('priority'));
+                });
+            })
             ->when(request()->input('category'), function ($query) {
                 $query->whereHas('category', function ($query) {
                     $query->whereId(request()->input('category'));
@@ -125,12 +134,14 @@ class Ticket extends Model implements HasMedia
         $usersQuery = \App\User::query();
 
         // Filtrar usuarios con el rol 'Analista TI' relacionados al ticket
-        $usersQuery->whereHas('roles', function ($q) {
-            $q->where('title', 'Analista TI');
-        })
+        $usersQuery
+            ->whereHas('roles', function ($q) {
+                $q->where('title', 'Analista TI');
+            })
             ->where(function ($q) {
                 // Filtrar usuarios que tengan comentarios sobre este ticket
-                $q->whereHas('comments', function ($q) {
+                $q
+                    ->whereHas('comments', function ($q) {
                     $q->whereTicketId($this->id);
                 })
                     // O usuarios asignados a este ticket
