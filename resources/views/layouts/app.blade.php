@@ -300,6 +300,8 @@
             padding: 0.3rem 0.8rem;
             /* Ajustamos el padding */
         }
+
+       
     </style>
 </head>
 
