@@ -1,26 +1,29 @@
 @extends('layouts.admin')
 @section('content')
     @can('comment_create')
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.comments.create') }}">
-                    {{ trans('global.add') }} {{ trans('cruds.comment.title_singular') }}
-                </a>
-            </div>
+        <div class="mb-3">
+            <a class="btn btn-success btn-lg shadow-sm" href="{{ route('admin.comments.create') }}">
+                <i class="fas fa-comment-dots me-2"></i>
+                {{ trans('global.add') }} {{ trans('cruds.comment.title_singular') }}
+            </a>
         </div>
     @endcan
-    <div class="card">
-        <div class="card-header">
-            {{ trans('cruds.comment.title_singular') }} {{ trans('global.list') }}
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-comments me-2"></i>
+                {{ trans('cruds.comment.title_singular') }} {{ trans('global.list') }}
+            </h5>
         </div>
 
-        <div class="card-body">
+        <div class="card-body p-4 rounded-bottom-4 border-top border-success shadow-sm">
             <div class="table-responsive">
-                <table class=" table table-bordered table-striped table-hover datatable datatable-Comment">
-                    <thead class="thead-dark">
+                <table
+                    class="table table-hover table-striped align-middle shadow-sm rounded dt-responsive nowrap datatable datatable-Comment">
+                    <thead class="table-dark">
                         <tr>
                             <th width="10">
-
+                                <i class="fas fa-check-square"></i>
                             </th>
                             <th>
                                 {{ trans('cruds.comment.fields.id') }}
@@ -29,7 +32,7 @@
                                 {{ trans('cruds.comment.fields.ticket') }}
                             </th>
                             <th>
-                                {{ trans('cruds.comment.fields.author_name') }}
+                                {{ trans('cruds.comment.fields.author_name')  }}
                             </th>
                             <th>
                                 {{ trans('cruds.comment.fields.author_email') }}
@@ -41,11 +44,11 @@
                                 {{ trans('cruds.comment.fields.comment_text') }}
                             </th>
                             <th>
-                                &nbsp;
+                                Acciones
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="align-middle">
                         @foreach ($comments as $key => $comment)
                             <tr data-entry-id="{{ $comment->id }}">
                                 <td>
@@ -54,55 +57,55 @@
                                 <td>
                                     {{ $comment->id ?? '' }}
                                 </td>
-                                <td>
+                                <td class="text-nowrap">
                                     {{ $comment->ticket->title ?? '' }}
                                 </td>
                                 <td>
-                                    {{ $comment->author->name ?? '' }}
+                                    {{ $comment->author_name ?? '' }}
                                 </td>
-                                <td>
+                                <td class="text-muted">
                                     {{ $comment->author_email ?? '' }}
                                 </td>
                                 <td>
                                     {{ $comment->user->name ?? '' }}
                                 </td>
-                                <td>
-                                    {{ $comment->comment_text ?? '' }}
+                                <td class="text-start">
+                                    {{ Str::limit($comment->comment_text, 50) }}
                                 </td>
-                                <td>
-                                    @can('comment_show')
-                                        <a class="btn btn-xs btn-primary"
-                                            href="{{ route('admin.comments.show', $comment->id) }}">
-                                            {{ trans('global.view') }}
-                                        </a>
-                                    @endcan
+                                <td class="text-center">
+                                    <div class="d-inline-flex justify-content-center align-items-center gap-2">
+                                        @can('comment_show')
+                                            <a class="btn btn-sm btn-outline-primary"
+                                                href="{{ route('admin.comments.show', $comment->id) }}" title="Ver">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        @endcan
 
-                                    @can('comment_edit')
-                                        <a class="btn btn-xs btn-info" href="{{ route('admin.comments.edit', $comment->id) }}">
-                                            {{ trans('global.edit') }}
-                                        </a>
-                                    @endcan
+                                        @can('comment_edit')
+                                            <a class="btn btn-sm btn-outline-info"
+                                                href="{{ route('admin.comments.edit', $comment->id) }}" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        @endcan
 
-                                    @can('comment_delete')
-                                        <form action="{{ route('admin.comments.destroy', $comment->id) }}" method="POST"
-                                            onsubmit="return confirm('{{ trans('global.areYouSure') }}');"
-                                            style="display: inline-block;">
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                            <input type="submit" class="btn btn-xs btn-danger"
-                                                value="{{ trans('global.delete') }}">
-                                        </form>
-                                    @endcan
-
+                                        @can('comment_delete')
+                                            <form action="{{ route('admin.comments.destroy', $comment->id) }}" method="POST"
+                                                onsubmit="return confirm('{{ trans('global.areYouSure') }}');"
+                                                class="d-inline">
+                                                @method('DELETE')
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        @endcan
+                                    </div>
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-
-
         </div>
     </div>
 @endsection
