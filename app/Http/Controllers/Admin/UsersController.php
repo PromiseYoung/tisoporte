@@ -9,34 +9,37 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Role;
 use App\User;
 use Gate;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UsersController extends Controller
 {
     public function index()
     {
+
         abort_if(Gate::denies('user_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        // Obtener todos los usuarios
         $users = User::all();
-
+        // Pasar los usuarios a la vista
         return view('admin.users.index', compact('users'));
     }
 
     public function create()
     {
+        // Verificar permisos
         abort_if(Gate::denies('user_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
+        // Obtener roles para el formulario de creación
         $roles = Role::all()->pluck('title', 'id');
-
+        // Pasar los roles a la vista de creación
         return view('admin.users.create', compact('roles'));
     }
 
     public function store(StoreUserRequest $request)
     {
+        // Verificar permisos
         $user = User::create($request->all());
+        // Asignar roles al usuario creado
         $user->roles()->sync($request->input('roles', []));
-
+        // Redirigir a la lista de usuarios después de la creación
         return redirect()->route('admin.users.index');
     }
 
