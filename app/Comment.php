@@ -30,7 +30,7 @@ class Comment extends Model
 
     public function ticket()
     {
-        return $this->belongsTo(Ticket::class, 'ticket_id');
+        return $this->belongsTo(Ticket::class);
     }
 
     public function user()
@@ -38,9 +38,4 @@ class Comment extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    //aplica la relacion de author
-    public function author()
-    {
-        return $this->belongsTo(Authors::class, 'user_id');
-    }
 }
