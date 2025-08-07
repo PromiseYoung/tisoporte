@@ -24,7 +24,7 @@
                                 <input id="author_name" type="text"
                                     class="form-control @error('author_name') is-invalid @enderror rounded-3"
                                     name="author_name" value="{{ old('author_name') }}" required autocomplete="name"
-                                    autofocus>
+                                    autofocus="off" autofocus>
                                 @error('author_name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -109,15 +109,24 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3">
-                                <label for="attachments"
-                                    class="form-label">{{ trans('cruds.ticket.fields.attachments') }}</label>
-                                <div class="needsclick dropzone @error('attachments') is-invalid @enderror"
-                                    id="attachments-dropzone"></div>
+                            <div class="mb-4">
+                                <label for="attachments" class="form-label fw-semibold text-muted">
+                                    {{ trans('cruds.ticket.fields.attachments') }}
+                                </label>
+
+                                <div class="border border-2 border-dashed rounded p-4 text-center bg-light dropzone-area needsclick dropzone @error('attachments') is-invalid @enderror"
+                                    id="attachments-dropzone">
+                                    <p class="mb-0 text-muted">
+                                        <i class="fas fa-cloud-upload-alt fa-2x text-primary mb-2"></i><br>
+                                        Arrastra archivos aquí o haz clic para subir.
+                                    </p>
+                                </div>
+
                                 @error('attachments')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
+
 
                             <div class="text-center">
                                 <button type="submit" class="btn btn-success btn-sm rounded-pill px-4">
