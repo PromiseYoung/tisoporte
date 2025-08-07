@@ -2,18 +2,18 @@
 
 namespace App;
 
+use App\Notifications\CommentEmailNotification;
 use Carbon\Carbon;
-use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Contracts\Auth\CanResetPassword;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Hash;
 
 class User extends Authenticatable implements CanResetPassword
 {
-    use  Notifiable, HasApiTokens;
+    use Notifiable, HasApiTokens;
 
     public $table = 'users';
 
@@ -32,6 +32,13 @@ class User extends Authenticatable implements CanResetPassword
     protected $fillable = [
         'name',
         'email',
+        'author_email', // Added author_email to fillable
+        'password',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'remember_token',
+        'email_verified_at',
         'password',
         'created_at',
         'updated_at',
@@ -86,9 +93,31 @@ class User extends Authenticatable implements CanResetPassword
     {
         return $this->roles->contains(1);
     }
+
     // relacion de llave foranea
     public function category()
     {
         return $this->belongsToMany(Category::class, 'category_id');
     }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function sendCommentNotification($comment)
+{
+    // Si el autor es un usuario registrado
+    $author = $this->author()->first();
+    if ($author && method_exists($author, 'notify')) {
+        $author->notify(new CommentEmailNotification($comment));
+    }
+
+    // Si solo se tiene el correo del autor (por ejemplo, usuarios externos)
+    elseif (!empty($this->author_email)) {
+        \Log::info("Enviando notificación por correo a autor externo: {$this->author_email}");
+        Notification::route('mail', $this->author_email)
+            ->notify(new CommentEmailNotification($comment));
+    }
+}
 }
