@@ -38,6 +38,7 @@ class HomeController
         return view('home', [
             'totalTickets' => $kpisCards['totalTickets'],
             'openTickets' => $kpisCards['openTickets'],
+            'processTickets' => $kpisCards['processTickets'] ?? 0, // Default to 0 if not set
             'closedTickets' => $kpisCards['closedTickets'],
             'closedPercentage' => $closedPercentage,
             'categories' => $pieAndTableData['categories'],
@@ -63,12 +64,14 @@ class HomeController
     {
         $open = $this->getTicketsByStatus('ABIERTO');
         $closed = $this->getTicketsByStatus('CERRADO');
+        $process = $this->getTicketsByStatus('EN ATENCION');
         $total = $open + $closed;
 
         return [
             'totalTickets' => $total,
             'openTickets' => $open,
             'closedTickets' => $closed,
+            'processTickets' => $process,
         ];
     }
 
@@ -95,7 +98,7 @@ class HomeController
     private function getLineChartData()
     {
         $admins = User::whereHas('roles', function ($query) {
-            $query->whereIn('title', ['Analista TI', 'ADMIN', 'MANTENIMIENTOS Y REPARACION']);
+            $query->whereIn('title', ['ANALISTA TI', 'ADMIN', 'REPARACION Y MANTENIMIENTOS']);
         })->with([
                     'tickets' => function ($query) {
                         $query->select(
