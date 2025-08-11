@@ -14,40 +14,64 @@
             </div>
 
             <!-- KPIs -->
-            <div class="row mb-4">
-                <div class="col-sm-6 col-md-3 mb-4">
-                    <div class="card bg-primary text-white shadow-sm rounded">
-                        <div class="card-body text-center">
-                            <h3 class="display-4">{{ $totalTickets }}</h3>
-                            <p class="mb-0">Total Tickets</p>
+            <div class="row mb-4 justify-content-center">
+                <div class="col-6 col-md-2 mb-4">
+                    <div class="card bg-primary text-white shadow-sm rounded small-card" style="min-height: 120px;">
+                        <div class="card-body text-center py-3 px-2">
+                            <h3 class="mb-2" style="font-size:2.4rem;">{{ $totalTickets }}</h3>
+                            <small style="font-size:1.1rem;">Total Tickets</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-3 mb-4">
-                    <div class="card bg-success text-white shadow-sm rounded">
-                        <div class="card-body text-center">
-                            <h3 class="display-4">{{ $openTickets }}</h3>
-                            <p class="mb-0">Tickets Abiertos</p>
+                <div class="col-6 col-md-2 mb-4">
+                    <div class="card bg-success text-white shadow-sm rounded small-card" style="min-height: 120px;">
+                        <div class="card-body text-center py-3 px-2">
+                            <h3 class="mb-2" style="font-size:2.4rem;">{{ $openTickets }}</h3>
+                            <small style="font-size:1.1rem;">Tickets Abiertos</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-3 mb-4">
-                    <div class="card bg-danger text-white shadow-sm rounded">
-                        <div class="card-body text-center">
-                            <h3 class="display-4">{{ $closedTickets }}</h3>
-                            <p class="mb-0">Tickets Cerrados</p>
+                <div class="col-6 col-md-2 mb-4">
+                    <div class="card rounded small-card"
+                        style="background-color: #c57f2f; color: #fff; box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15); border-radius: .5rem; min-height: 120px;">
+                        <div class="card-body text-center py-3 px-2">
+                            <h3 class="mb-2" style="font-size:2.4rem;">{{ $processTickets }}</h3>
+                            <small style="font-size:1.1rem;">En Atención</small>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-3 mb-4">
-                    <div class="card bg-warning text-dark shadow-sm rounded">
-                        <div class="card-body text-center">
-                            <h3 class="display-4">{{ number_format($closedPercentage, 1) }}%</h3>
-                            <p class="mb-0">Porcentaje Cerrados</p>
+                <div class="col-6 col-md-2 mb-4">
+                    <div class="card bg-danger text-white shadow-sm rounded small-card" style="min-height: 120px;">
+                        <div class="card-body text-center py-3 px-2">
+                            <h3 class="mb-2" style="font-size:2.4rem;">{{ $closedTickets }}</h3>
+                            <small style="font-size:1.1rem;">Cerrados</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-2 mb-4">
+                    <div class="card bg-warning text-dark shadow-sm rounded small-card" style="min-height: 120px;">
+                        <div class="card-body text-center py-3 px-2">
+                            <h3 class="mb-2" style="font-size:2.4rem;">{{ number_format($closedPercentage, 1) }}%</h3>
+                            <small style="font-size:1.1rem;">% Cerrados</small>
                         </div>
                     </div>
                 </div>
             </div>
+            <style>
+                .small-card .card-body h4 {
+                    font-size: 1.8rem;
+                }
+
+                .small-card .card-body small {
+                    font-size: 0.85rem;
+                }
+
+                @media (width: 120px) {
+                    .small-card .card-body h4 {
+                        font-size: 1.8rem;
+                    }
+                }
+            </style>
 
             <!-- GRÁFICO DE PIE -->
             <div class="row mb-4">
@@ -201,7 +225,21 @@
         }
 
         function generateColors(count) {
-            const base = ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#5a5c69'];
+            // Paleta de colores vibrantes y llamativos
+            const base = [
+                '#1E88E5', // azul masculino
+                '#C2185B', // rosa femenino
+                '#43A047', // verde masculino
+                '#8E24AA', // violeta femenino
+                '#F4511E', // naranja masculino
+                '#3949AB', // azul profundo masculino
+                '#F06292', // rosa claro femenino
+                '#00897B', // verde azulado masculino
+                '#D81B60', // magenta femenino
+                '#5E35B1', // púrpura masculino/femenino
+                '#039BE5', // azul claro masculino
+                '#FDD835', // amarillo femenino
+            ];
             return Array.from({
                 length: count
             }, (_, i) => base[i % base.length]);
@@ -309,7 +347,7 @@
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Cerrados', 'Pendientes'],
+                    labels: ['Cerrados', 'Pendientes', 'En Atencion'],
                     datasets: [{
                         data: [closedPercentage, 100 - closedPercentage],
                         backgroundColor: ['#36b9cc', '#e74a3b'],
@@ -388,7 +426,7 @@
                                 color: '#333',
                                 padding: 20,
                                 font: {
-                                    size: 14,
+                                    size: 12,
                                     weight: 'bold'
                                 }
                             }
@@ -419,14 +457,14 @@
                                 display: true,
                                 text: 'Cantidad de Soportes',
                                 font: {
-                                    size: 14
+                                    size: 12
                                 }
                             },
                             ticks: {
-                                stepSize: 5,
+                                stepSize: 4,
                                 color: '#444',
                                 font: {
-                                    size: 14
+                                    size: 12
                                 }
                             }
                         },
@@ -454,9 +492,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             Chart.defaults.font = {
                 size: 16,
-                family: "'Poppins', 'Roboto', sans-serif",
+                family: "'monserrat', sans-serif",
                 weight: '500',
-                lineHeight: 1.4
+                lineHeight: 1.2
             };
             renderPieChart();
             renderGaugeChart();
