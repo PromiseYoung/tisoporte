@@ -45,39 +45,60 @@ class TicketController extends Controller
 
     public function store(Request $request)
     {
-        // Validación de los datos
+        // Validación de datos de entrada
         $request->validate([
-            'title' => 'required',
-            'content' => 'required',
-            'author_name' => 'required',
+            'title' => 'required|string',
+            'content' => 'required|string',
+            'author_name' => 'required|string',
             'author_email' => 'required|email',
             'category' => 'required|exists:categories,name',
             'priority' => 'required|exists:priorities,name',
             'localidad' => 'required|exists:localidades,nombre'
         ]);
 
-        DB::beginTransaction(); // Inicia la transacción
+        DB::beginTransaction();
 
         try {
-            // Convertir nombres a IDs
+            // Buscar registros asociados
             $category = Category::where('name', $request->category)->first();
             $priority = Priority::where('name', $request->priority)->first();
             $localidad = Localidad::where('nombre', $request->localidad)->first();
 
-            // Asociar Analista por la categoria que le corresponde
-            $user = User::find($category->user_id);
+            // Log para depuración
+            \Log::debug('Datos encontrados en store():', [
+                'category' => $category,
+                'priority' => $priority,
+                'localidad' => $localidad,
+                'request_category' => $request->category
+            ]);
 
-            // Agregar los IDs al request
-            $request->request->add([
+            // Verificar que existan
+            if (!$category || !$priority || !$localidad) {
+                DB::rollBack();
+                return response(
+                    redirect()->back()->withErrors([
+                        'error' => 'No se encontró la categoría, prioridad o localidad especificada.'
+                    ])
+                );
+            }
+
+            // Buscar usuario asignado según categoría
+            $user = null;
+            if ($category && isset($category->user_id) && $category->user_id) {
+                $user = User::find($category->user_id);
+            }
+
+            // Agregar campos adicionales al request
+            $request->merge([
                 'category_id' => $category->id,
                 'priority_id' => $priority->id,
                 'localidad_id' => $localidad->id,
                 'assigned_to_user_id' => optional($user)->id,
                 'status_id' => 1,
-                'id' => Str::uuid(),
+                'id' => (string) Str::uuid(),
             ]);
 
-            // Crear el ticket en la base de datos
+            // Crear ticket
             $ticket = Ticket::create($request->all());
 
             // Subir archivos adjuntos (si existen)
@@ -85,20 +106,26 @@ class TicketController extends Controller
                 $ticket->addMedia(storage_path('app/tmp/uploads/' . $file))->toMediaCollection('attachments');
             }
 
-            DB::commit(); // Si todo va bien, confirma la transacción
+            DB::commit();
 
-            // Retornar la respuesta de éxito
-            return redirect()->back()->withStatus('Tu ticket ha sido enviado, nos pondremos en contacto contigo. Puedes ver el estado del ticket <a href="' . route('tickets.show', $ticket->id) . '">Ver Ticket</a>');
+            return redirect()->back()->withStatus(
+                'Tu ticket ha sido enviado, nos pondremos en contacto contigo.
+            Puedes ver el estado de la solicitud de tu ticket <a href="' . route('tickets.show', $ticket->id) . '">Ver Ticket</a>'
+            );
+
         } catch (\Exception $e) {
-            DB::rollBack(); // Si algo falla, revierte la transacción
-
-            // Opcional: Registrar el error para diagnóstico
-            \Log::error('Error al crear el ticket: ' . $e->getMessage());
-
-            // Retornar un mensaje de error al usuario
-            return response(redirect()->back()->withErrors(['error' => 'Hubo un problema al crear tu ticket. Intenta nuevamente.']));
+            DB::rollBack();
+            \Log::error('Error al crear el ticket: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response(
+                redirect()->back()->withErrors([
+                    'error' => 'Hubo un problema al crear tu ticket. Intenta nuevamente.'
+                ])
+            );
         }
     }
+
     /**
      * Display the specified resource.
      *
@@ -139,8 +166,8 @@ class TicketController extends Controller
 
         // Crear el comentario asociado al ticket
         $comment = $ticket->comments()->create([
-            'author_name' => $ticket->author->name ?? $ticket->author_name,
-            'author_email' => $ticket->author_email ?? $ticket->author->email,
+            'author_name' => $ticket->author_name,
+            'author_email' => $ticket->author_email,
             'comment_text' => $request->comment_text,
         ]);
 
