@@ -5,52 +5,76 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Category;
 use App\Localidad;
+use App\Notifications\AssignedTicketNotification;
+use App\Notifications\DataChangeEmailNotification;
 use App\Priority;
 use App\Ticket;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // Incluir el facade DB
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
-
-// Para generar UUID si es necesario
 
 class TicketController extends Controller
 {
     use MediaUploadingTrait;
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        $categories = Category::select('id', 'name')->get();
-        $priorities = Priority::select('id', 'name')->get();
-        $localidades = Localidad::select('id', 'nombre')->get(); // Obtener solo los campos necesarios
-        $users = User::select('id', 'name')->get(); // Obtener solo los campos necesarios
-
-        return response()->view(
-            'tickets.create',
-            compact('categories', 'priorities', 'users', 'localidades')
+        $categories = Cache::remember(
+            'ticket_categories',
+            600,
+            fn() =>
+            Category::select('id', 'name')->get()
         );
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+        $priorities = Cache::remember(
+            'ticket_priorities',
+            600,
+            fn() =>
+            Priority::select('id', 'name')->get()
+        );
+
+        $localidades = Cache::remember(
+            'ticket_localidades',
+            600,
+            fn() =>
+            Localidad::select('id', 'nombre')->get()
+        );
+
+        $users = Cache::remember(
+            'ticket_users',
+            600,
+            fn() =>
+            User::select('id', 'name')->get()
+        );
+
+        return view('tickets.create', compact(
+            'categories',
+            'priorities',
+            'users',
+            'localidades'
+        ));
+    }
 
     public function store(Request $request)
     {
-        // Validación de datos de entrada
-        $request->validate([
-            'title' => 'required|string',
+        // ✅ Anti-spam mejorado (atómico)
+        $submissionKey = 'ticket_submission:' . $request->ip() . ':' . $request->author_email;
+
+        if (!Cache::add($submissionKey, true, 15)) {
+            return back()->withErrors([
+                'error' => 'Por favor espera unos segundos antes de enviar otro ticket.'
+            ]);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'author_name' => 'required|string',
-            'author_email' => 'required|email',
+            'author_name' => 'required|string|max:255',
+            'author_email' => 'required|email|max:255',
             'category' => 'required|exists:categories,name',
             'priority' => 'required|exists:priorities,name',
             'localidad' => 'required|exists:localidades,nombre'
@@ -59,124 +83,144 @@ class TicketController extends Controller
         DB::beginTransaction();
 
         try {
-            // Buscar registros asociados
-            $category = Category::where('name', $request->category)->first();
-            $priority = Priority::where('name', $request->priority)->first();
-            $localidad = Localidad::where('nombre', $request->localidad)->first();
+            // 🔥 Manteniendo lógica original (por nombre)
+            $category = Category::where('name', $validated['category'])->firstOrFail();
+            $priority = Priority::where('name', $validated['priority'])->firstOrFail();
+            $localidad = Localidad::where('nombre', $validated['localidad'])->firstOrFail();
 
-            // Log para depuración
-            \Log::debug('Datos encontrados en store():', [
-                'category' => $category,
-                'priority' => $priority,
-                'localidad' => $localidad,
-                'request_category' => $request->category
-            ]);
+            $user = $category->user_id ? User::find($category->user_id) : null;
 
-            // Verificar que existan
-            if (!$category || !$priority || !$localidad) {
-                DB::rollBack();
-                return response(
-                    redirect()->back()->withErrors([
-                        'error' => 'No se encontró la categoría, prioridad o localidad especificada.'
-                    ])
-                );
-            }
-
-            // Buscar usuario asignado según categoría
-            $user = null;
-            if ($category && isset($category->user_id) && $category->user_id) {
-                $user = User::find($category->user_id);
-            }
-
-            // Agregar campos adicionales al request
-            $request->merge([
+            $ticket = Ticket::create([
+                'title' => $validated['title'],
+                'content' => $validated['content'],
+                'author_name' => $validated['author_name'],
+                'author_email' => $validated['author_email'],
                 'category_id' => $category->id,
                 'priority_id' => $priority->id,
                 'localidad_id' => $localidad->id,
-                'assigned_to_user_id' => optional($user)->id,
+                'assigned_to_user_id' => $user?->id,
                 'status_id' => 1,
                 'id' => (string) Str::uuid(),
             ]);
 
-            // Crear ticket
-            $ticket = Ticket::create($request->all());
-
-            // Subir archivos adjuntos (si existen)
-            foreach ($request->input('attachments', []) as $file) {
-                $ticket->addMedia(storage_path('app/tmp/uploads/' . $file))->toMediaCollection('attachments');
-            }
+            // Adjuntos
+            $this->processAttachments($ticket, $request);
 
             DB::commit();
 
-            return redirect()->back()->withStatus(
+            // 🔥 Notificaciones fuera de la transacción
+            $this->sendNotifications($ticket);
+
+            return redirect()->route('tickets.create')->withStatus(
                 'Tu ticket ha sido enviado, nos pondremos en contacto contigo.
-            Puedes ver el estado de la solicitud de tu ticket <a href="' . route('tickets.show', $ticket->id) . '">Ver Ticket</a>'
+                Puedes ver el estado de tu solicitud aquí:
+                <a href="' . route('tickets.show', $ticket->id) . '">Ver Ticket</a>'
             );
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
-            \Log::error('Error al crear el ticket: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+            Cache::forget($submissionKey);
+
+            Log::error('Error al crear el ticket', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
-            return response(
-                redirect()->back()->withErrors([
-                    'error' => 'Hubo un problema al crear tu ticket. Intenta nuevamente.'
-                ])
-            );
+
+            return back()->withErrors([
+                'error' => 'Hubo un problema al crear tu ticket. Intenta nuevamente.'
+            ])->withInput();
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Ticket  $ticket
-     * @return \Illuminate\Http\Response
-     */
+    private function sendNotifications(Ticket $ticket): void
+    {
+        try {
+            // Usuario asignado
+            if ($ticket->assigned_to_user_id) {
+                $assignedUser = User::find($ticket->assigned_to_user_id);
+
+                if ($assignedUser) {
+                    $assignedUser->notify(
+                        new DataChangeEmailNotification($ticket->toArray())
+                    );
+                }
+            }
+
+            // Admins (cacheado)
+            $admins = Cache::remember('ticket_admin_users', 300, function () {
+                return User::whereHas('roles', function ($q) {
+                    $q->where('title', 'ADMIN');
+                })->get();
+            });
+
+            if ($admins->isNotEmpty()) {
+                Notification::send($admins, new AssignedTicketNotification($ticket));
+            }
+
+            // Autor
+            if (!empty($ticket->author_email)) {
+                Notification::route('mail', $ticket->author_email)
+                    ->notify(new AssignedTicketNotification($ticket));
+            }
+
+        } catch (\Throwable $e) {
+            Log::error('Error enviando notificaciones', [
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    private function processAttachments(Ticket $ticket, Request $request): void
+    {
+        foreach ((array) $request->input('attachments', []) as $file) {
+            $file = basename($file);
+            $path = storage_path('app/tmp/uploads/' . $file);
+
+            if (is_file($path)) {
+                $ticket->addMedia($path)->toMediaCollection('attachments');
+            } else {
+                Log::warning("Archivo adjunto no encontrado: {$path}");
+            }
+        }
+    }
+
     public function show(Ticket $ticket)
     {
         $ticket->load('comments');
 
-        $ticket->created_at = $ticket->created_at->format('d-m-Y H:i:s');
+        $ticket->created_at_formatted = $ticket->created_at->format('d-m-Y H:i:s');
 
-        return response()->view('tickets.show', compact('ticket'));
+        return view('tickets.show', compact('ticket'));
     }
 
     public function storeComment(Request $request, Ticket $ticket)
     {
-        // Validar el texto del comentario
         $request->validate([
-            'comment_text' => 'required',
+            'comment_text' => 'required|string',
         ]);
 
-        // Verificar si el ticket está cerrado y cuánto tiempo ha pasado
+        // ✅ FIX BUG lógica de cerrado
         if ($ticket->status->name === 'CERRADO') {
-            $closedAt = $ticket->updated_at ?? now(); // asumiendo que se cierra con update
+            $closedAt = $ticket->updated_at ?? now();
             $hoursSinceClosed = now()->diffInHours($closedAt);
 
             if ($hoursSinceClosed > 12) {
-                return redirect()->back()->withErrors([
-                    'error' => 'Ya no puedes agregar comentarios. Han pasado más de 12 horas desde el cierre del ticket.',
+                return back()->withErrors([
+                    'error' => 'Ya no puedes agregar comentarios. Han pasado más de 12 horas desde el cierre.'
                 ]);
             }
-
-            return redirect()->back()->withErrors([
-                'error' => 'Este ticket ha sido cerrado. Si necesitas más ayuda, por favor crea uno nuevo.',
-            ]);
         }
 
-        // Crear el comentario asociado al ticket
         $comment = $ticket->comments()->create([
             'author_name' => $ticket->author_name,
             'author_email' => $ticket->author_email,
             'comment_text' => $request->comment_text,
         ]);
 
-        // Enviar notificación al autor del ticket
         $ticket->sendCommentNotification($comment);
 
-        return redirect()->back()->withStatus(
-            'Comentario enviado con éxito. En breve serás atendido por el analista asignado.'
+        return back()->withStatus(
+            'Comentario enviado con éxito. En breve serás atendido por el analista.'
         );
     }
-
 }
