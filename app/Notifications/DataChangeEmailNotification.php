@@ -32,6 +32,8 @@ class DataChangeEmailNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
+
+    // Definir los canales de notificación
     public function via($notifiable)
     {
         return ['mail'];  // Corregí el formato de retorno para que sea un array
@@ -43,6 +45,8 @@ class DataChangeEmailNotification extends Notification
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
+
+    // Construir el correo de notificación
     public function toMail($notifiable)
     {
         return $this->getMessage();  // Usamos el método para obtener el mensaje
@@ -53,12 +57,16 @@ class DataChangeEmailNotification extends Notification
      *
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
+
+    // Generar el contenido del mensaje
     public function getMessage()
     {
         // Extraemos la información del ticket y el analista
         $analista = $this->ticket->assigned_to_user;
+        // Definición de variables para mayor claridad
         $ticketTitle = $this->ticket->title;
         $authorName = $this->ticket->author_name;
+        // Limitar el contenido del ticket para el correo
         $ticketContent = Str::limit($this->ticket->content, 200);
         $ticketId = $this->ticket->id;
 
@@ -68,14 +76,14 @@ class DataChangeEmailNotification extends Notification
         // Retornamos la notificación
         return (new MailMessage)
             ->subject($this->data['action'])
-            ->greeting(__('Hola, :name 👋', ['name' => $analista->name]))
+            ->greeting(__('Buen dia, :name 👋', ['name' => $analista->name]))
             ->line('')
-            ->line(__('Usuario: :name', ['name' => $authorName]))
+            ->line(__('Nombre: :name', ['name' => $authorName]))
             ->line('')
-            ->line(__('Nombre del Soporte: :title', ['title' => $ticketTitle]))
+            ->line(__('Asunto: :title', ['title' => $ticketTitle]))
             ->line('')
             ->line('')
-            ->line(__('Descripción breve: :content', ['content' => $ticketContent]))
+            ->line(__('Descripción: :content', ['content' => $ticketContent]))
             ->action(__('Ver ticket completo'), $ticketRoute)
             ->line(__('Gracias por el apoyo.'))
             ->salutation(__('Éxito en tu soporte.'));
