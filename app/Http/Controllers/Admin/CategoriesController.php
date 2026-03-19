@@ -8,14 +8,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyCategoryRequest;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use Gate;
+use \Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class CategoriesController extends Controller
 {
     public function index()
     {
-        abort_if(\Illuminate\Support\Facades\Gate::denies('category_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('category_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $categories = Category::all();
 
@@ -24,7 +24,7 @@ class CategoriesController extends Controller
 
     public function create()
     {
-        abort_if(\Illuminate\Support\Facades\Gate::denies('category_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('category_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $users = User::all();
 
@@ -45,7 +45,7 @@ class CategoriesController extends Controller
 
     public function edit(Category $category)
     {
-        abort_if(\Illuminate\Support\Facades\Gate::denies('category_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('category_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $users = User::all();
 
@@ -66,14 +66,14 @@ class CategoriesController extends Controller
 
     public function show(Category $category)
     {
-        abort_if(\Illuminate\Support\Facades\Gate::denies('category_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('category_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.categories.show', compact('category'));
     }
 
     public function destroy(Category $category)
     {
-        abort_if(\Illuminate\Support\Facades\Gate::denies('category_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('category_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $category->delete();
 
