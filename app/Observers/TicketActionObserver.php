@@ -19,7 +19,7 @@ class TicketActionObserver
     {
         // Define los datos de la notificación
         $data = [
-            'action' => 'New ticket has been created!',
+            'action' => 'Han subido un nuevo ticket!',
             'model_name' => 'Ticket',
             'ticket' => $model,
         ];
@@ -34,7 +34,7 @@ class TicketActionObserver
         // Esto es útil para evitar enviar notificaciones vacías o innecesarias.
 
         $users = User::whereHas('roles', function ($q) {
-            $q->where('title', 'Admin');
+            $q->where('title', 'ADMIN');
         })->get();
 
         // Verifica si hay usuarios antes de enviar la notificación
