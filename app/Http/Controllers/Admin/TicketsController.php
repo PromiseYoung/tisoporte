@@ -16,11 +16,12 @@ use App\Status;
 use App\Ticket;
 use App\User;
 use Illuminate\Http\Request;
-use Notification;
+use \Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
-use DB;
-use Gate;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class TicketsController extends Controller
 {
@@ -132,7 +133,7 @@ class TicketsController extends Controller
 
     public function create()
     {
-        abort_if(Gate::denies('ticket_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(\Illuminate\Support\Facades\Gate::denies('ticket_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $statuses = Status::pluck('name', 'id')
             ->prepend(trans('Selecciona el status'), '');
@@ -209,7 +210,7 @@ class TicketsController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
 
-            \Log::error('Falla al crear el ticket', [
+            Log::error('Falla al crear el ticket', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -238,7 +239,7 @@ class TicketsController extends Controller
             });
 
             if ($admins->isNotEmpty()) {
-                Notification::send($admins, new AssignedTicketNotification($ticket));
+                \Illuminate\Support\Facades\Notification::send($admins, new AssignedTicketNotification($ticket));
             }
 
             // Notificar al autor del ticket
@@ -248,7 +249,7 @@ class TicketsController extends Controller
             }
 
         } catch (\Exception $e) {
-            \Log::error('Error enviando notificaciones: ' . $e->getMessage(), [
+            Log::error('Error enviando notificaciones: ' . $e->getMessage(), [
                 'ticket_id' => $ticket->id,
                 'error_trace' => $e->getTraceAsString()
             ]);
