@@ -7,14 +7,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyTicketRequest;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
-use App\Authors;
 use App\Category;
 use App\Localidad;
+use App\Notifications\AssignedTicketNotification;
+use App\Notifications\DataChangeEmailNotification;
 use App\Priority;
 use App\Status;
 use App\Ticket;
 use App\User;
 use Illuminate\Http\Request;
+use Notification;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use DB;
@@ -26,15 +28,26 @@ class TicketsController extends Controller
 
     public function index(Request $request)
     {
+
+        // Control de acceso
         if ($request->ajax()) {
-            $query = Ticket::with(['status', 'priority', 'category', 'assigned_to_user', 'comments'])
+            $query = Ticket::with([
+                'status',
+                'priority',
+                'category',
+                'assigned_to_user',
+                'localidad'
+            ])
+                ->withCount('comments')
                 ->filterTickets($request)
-                ->select(sprintf('%s.*', (new Ticket)->table));
+                ->select('tickets.*');
             $table = Datatables::of($query);
 
+            // Definición de columnas y sus valores
             $table->addColumn('placeholder', '&nbsp;');
             $table->addColumn('actions', '&nbsp;');
 
+            // Definición de acciones para cada fila
             $table->editColumn('actions', function ($row) {
                 $viewGate = 'ticket_show';
                 $editGate = 'ticket_edit';
@@ -50,6 +63,7 @@ class TicketsController extends Controller
                 ));
             });
 
+            // Definición de columnas y sus valores
             $table->editColumn('id', function ($row) {
                 return $row->id ? $row->id : '';
             });
@@ -87,7 +101,7 @@ class TicketsController extends Controller
             });
 
             $table->editColumn('author_name', function ($row) {
-                return $row->author ? $row->author->name : '';
+                return $row->author_name ? $row->author_name : '';
             });
 
             $table->editColumn('author_email', function ($row) {
@@ -102,11 +116,12 @@ class TicketsController extends Controller
                 return route('admin.tickets.show', $row->id);
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'status', 'priority', 'category', 'assigned_to_user', 'localidad']);
+            $table->rawColumns(['actions', 'placeholder']);
 
             return $table->make(true);
         }
 
+        // Cargar datos para filtros
         $priorities = Priority::all();
         $statuses = Status::all();
         $categories = Category::all();
@@ -119,34 +134,49 @@ class TicketsController extends Controller
     {
         abort_if(Gate::denies('ticket_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $statuses = Status::all()->pluck('name', 'id')->prepend(trans('Selecciona el status'), '');
+        $statuses = Status::pluck('name', 'id')
+            ->prepend(trans('Selecciona el status'), '');
 
-        $priorities = Priority::all()->pluck('name', 'id')->prepend(trans('Elige la prioridad del soporte'), '');
+        $priorities = Priority::pluck('name', 'id')
+            ->prepend(trans('Elige la prioridad del soporte'), '');
 
-        $categories = Category::all()->pluck('name', 'id')->prepend(trans('Elige la categoria'), '');
+        $categories = Category::pluck('name', 'id')
+            ->prepend(trans('Elige la categoria'), '');
 
-        $authors = Authors::all()->pluck('name', 'id')->prepend('Seleccione un autor', '');
-
-        $localidad = Localidad::all()->pluck('nombre', 'id')->prepend(trans('Selecciona una localidad'), '');
+        $localidad = Localidad::pluck('nombre', 'id')
+            ->prepend(trans('Selecciona una localidad'), '');
 
         $user = auth()->user();
 
-        $assigned_to_users_query = User::whereHas('roles', function ($query) {
-            $query->whereIn('id', [1, 2]);
-        });
+        $assigned_to_users = User::where(function ($query) use ($user) {
 
-        if ($user instanceof \App\User && isset($user->id)) {
-            $assigned_to_users_query->orWhere('id', $user->id);
-        }
+            $query->whereHas('roles', function ($q) {
+                $q->whereIn('id', [1, 2]);
+            });
 
-        $assigned_to_users = $assigned_to_users_query->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-        return view('admin.tickets.create', compact('statuses', 'priorities', 'categories', 'assigned_to_users', 'localidad', 'authors'));
+            if ($user) {
+                $query->orWhere('id', $user->id);
+            }
+
+        })
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->prepend(trans('global.pleaseSelect'), '');
+
+        return view('admin.tickets.create', compact(
+            'statuses',
+            'priorities',
+            'categories',
+            'assigned_to_users',
+            'localidad'
+        ));
     }
 
     public function store(StoreTicketRequest $request)
     {
         DB::beginTransaction();
 
+        // Intentar crear el ticket y manejar adjuntos
         try {
             $data = $request->all();
 
@@ -155,24 +185,81 @@ class TicketsController extends Controller
                 $data['assigned_to_user_id'] = auth()->id();
             }
 
-            $ticket = Ticket::create($data);
+            // Validar que el usuario asignado exista
+            if (!empty($data['assigned_to_user_id'])) {
+                $userExists = User::where('id', $data['assigned_to_user_id'])->exists();
+                if (!$userExists) {
+                    throw new \Exception('El usuario asignado no existe.');
+                }
+            }
+
+            // Crear el ticket
+            $ticket = $this->createTicket($data);
             $this->handleAttachments($request, $ticket);
-
+            // Confirmar la transacción
             DB::commit();
+            // Notificaciones - procesar de manera más eficiente
+            $this->sendNotifications($ticket);
 
-            return redirect()->route('admin.tickets.index')->withStatus('status', 'Ticket creado exitosamente.');
-        } catch (\Exception $e) {
+
+
+            // CORRECCIÓN: withStatus solo recibe un parámetro
+            return redirect()->route('admin.tickets.index')->with('status', 'Ticket creado exitosamente.');
+
+        } catch (\Throwable $e) {
             DB::rollBack();
 
-            \Log::error('Error al crear el ticket: ' . $e->getMessage());
+            \Log::error('Falla al crear el ticket', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
 
             return redirect()->route('admin.tickets.index')->withErrors(['error' => 'Hubo un problema al crear el ticket. Intenta nuevamente.']);
         }
     }
 
-    private function createTicket($request)
+
+    private function sendNotifications(Ticket $ticket): void
     {
-        return Ticket::create($request->all());
+        try {
+            // Notificar al usuario asignado
+            if ($ticket->assigned_to_user_id) {
+                $assignedUser = User::find($ticket->assigned_to_user_id);
+                if ($assignedUser) {
+                    $assignedUser->notify(new DataChangeEmailNotification($ticket->toArray()));
+                }
+            }
+
+            // Notificar a todos los administradores (con cache para mejor performance)
+            $admins = cache()->remember('ticket_admins', 600, function () {
+                return User::whereHas('roles', function ($q) {
+                    $q->where('title', 'ADMIN');
+                })->get();
+            });
+
+            if ($admins->isNotEmpty()) {
+                Notification::send($admins, new AssignedTicketNotification($ticket));
+            }
+
+            // Notificar al autor del ticket
+            if (!empty($ticket->author_email) && filter_var($ticket->author_email, FILTER_VALIDATE_EMAIL)) {
+                Notification::route('mail', $ticket->author_email)
+                    ->notify(new AssignedTicketNotification($ticket));
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Error enviando notificaciones: ' . $e->getMessage(), [
+                'ticket_id' => $ticket->id,
+                'error_trace' => $e->getTraceAsString()
+            ]);
+            // NO relanzar la excepción para no interrumpir el flujo principal
+        }
+    }
+
+    private function createTicket($data)
+    {
+        // creacion del ticket - mantenemos el parámetro como array
+        return Ticket::create($data);
     }
 
     private function handleAttachments($request, $ticket)
@@ -200,7 +287,6 @@ class TicketsController extends Controller
             'statuses' => Status::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), ''),
             'priorities' => Priority::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), ''),
             'categories' => Category::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), ''),
-            'authors' => Authors::pluck('name', 'id'),
             'localidad' => Localidad::pluck('nombre', 'id')->prepend(trans('global.pleaseSelect'), ''),
             'assigned_to_users' => $assigned_to_users_query->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), ''),
         ];
@@ -214,7 +300,7 @@ class TicketsController extends Controller
     {
         $ticket->update($request->all());
 
-        if (count($ticket->attachments) > 0) {
+        if ($ticket->attachments->isNotEmpty()) {
             foreach ($ticket->attachments as $media) {
                 if (!in_array($media->file_name, $request->input('attachments', []))) {
                     $media->delete();
@@ -225,6 +311,7 @@ class TicketsController extends Controller
         $media = $ticket->attachments->pluck('file_name')->toArray();
         foreach ($request->input('attachments', []) as $file) {
             if (count($media) === 0 || !in_array($file, $media)) {
+                $file = basename($file);
                 $ticket->addMedia(storage_path('app/tmp/uploads/' . $file))->toMediaCollection('attachments');
             }
         }
@@ -252,7 +339,11 @@ class TicketsController extends Controller
 
     public function massDestroy(MassDestroyTicketRequest $request)
     {
-        Ticket::whereIn('id', request('ids'))->delete();
+        $ids = $request->input('ids', []);
+
+        if (!empty($ids)) {
+            Ticket::whereIn('id', $ids)->delete();
+        }
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
@@ -261,45 +352,46 @@ class TicketsController extends Controller
     public function storeComment(Request $request, Ticket $ticket)
     {
         $autoCloseHours = 48;
+        $closedStatus = cache()->remember('status_closed', 3600, function () {
+            return Status::where('name', 'CERRADO')->firstOrFail();
+        });
+        // Si no está cerrado, verificar inactividad
+        if ($ticket->status_id !== $closedStatus->id) {
+            $inactiveHours = $ticket->updated_at->diffInHours(now());
 
-        // Cerrar automáticamente si ha pasado el tiempo de inactividad
-        if ($ticket->status->name !== 'CERRADO') {
-            $lastUpdated = $ticket->updated_at ?? $ticket->created_at;
-            if ($lastUpdated && now()->diffInHours($lastUpdated) >= $autoCloseHours) {
-                $closedStatus = Status::where('name', 'CERRADO')->first();
-                if ($closedStatus) {
-                    $ticket->status_id = $closedStatus->id;
-                    $ticket->save();
-                }
+            if ($inactiveHours >= $autoCloseHours) {
+                $ticket->update([
+                    'status_id' => $closedStatus->id
+                ]);
             }
         }
 
-        // Verifica si el ticket ya fue cerrado (por inactividad u otra causa)
+        // Refrescar estado
         $ticket->refresh();
-        if ($ticket->status->name === 'CERRADO') {
-            return redirect()->back()->withErrors([
-                'error' => 'Este ticket ya ha sido cerrado por inactividad. Por favor, crea uno nuevo si necesitas continuar con el soporte.'
+
+        // Bloquear si está cerrado
+        if ($ticket->status_id === $closedStatus->id) {
+            return back()->withErrors([
+                'error' => 'Este ticket fue cerrado automáticamente por inactividad.'
             ]);
         }
 
-        // Validar el comentario
+        // Validar comentario
         $request->validate([
-            'comment_text' => 'required',
+            'comment_text' => 'required|string',
         ]);
 
+        $this->middleware('throttle:20,1')->only('storeComment');
         // Guardar comentario
-        $user = auth()->user();
         $comment = $ticket->comments()->create([
-            'author_name' => $user->author_name ?? $user->name,
-            'author_email' => $user->author_email,
+            'author_name' => auth()->user()->name,
+            'author_email' => auth()->user()->email,
             'comment_text' => $request->comment_text,
         ]);
 
-        // Notificar al autor del ticket
         $ticket->sendCommentNotification($comment);
 
-        // Mensaje de éxito
-        return redirect()->back()->withStatus('Comentario enviado con éxito. El ticket permanece abierto.');
+        return back()->withStatus('Comentario enviado con éxito.');
     }
 
 }
